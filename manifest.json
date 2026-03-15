@@ -1,0 +1,33 @@
+{
+  "name": "NODAL AI Economy Analysis",
+  "short_name": "NODAL AI",
+  "description": "Real-time global economy analysis — stocks, macro, crypto, forex, crisis radar powered by AI",
+  "start_url": "./nodal-ai-economy-analysis.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0a0b0f",
+  "theme_color": "#4f8ef7",
+  "orientation": "portrait-primary",
+  "categories": ["finance", "business"],
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='96' fill='%230a0b0f'/%3E%3Ccircle cx='256' cy='256' r='180' fill='none' stroke='%234f8ef7' stroke-width='12'/%3E%3Ccircle cx='256' cy='256' r='130' fill='none' stroke='%237c3aed' stroke-width='8'/%3E%3Ccircle cx='256' cy='256' r='20' fill='%234f8ef7'/%3E%3Cline x1='256' y1='76' x2='256' y2='160' stroke='%234f8ef7' stroke-width='8' stroke-linecap='round'/%3E%3Cline x1='256' y1='352' x2='256' y2='436' stroke='%234f8ef7' stroke-width='8' stroke-linecap='round'/%3E%3Cline x1='76' y1='256' x2='160' y2='256' stroke='%234f8ef7' stroke-width='8' stroke-linecap='round'/%3E%3Cline x1='352' y1='256' x2='436' y2='256' stroke='%234f8ef7' stroke-width='8' stroke-linecap='round'/%3E%3Ctext x='256' y='285' font-family='Arial,sans-serif' font-size='56' font-weight='800' fill='%234f8ef7' text-anchor='middle'%3EN%3C/text%3E%3C/svg%3E",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "url": "./nodal-ai-economy-analysis.html#dashboard",
+      "description": "Market overview dashboard"
+    },
+    {
+      "name": "Crisis Radar",
+      "url": "./nodal-ai-economy-analysis.html#crisis",
+      "description": "Crisis detection and analysis"
+    }
+  ]
+}

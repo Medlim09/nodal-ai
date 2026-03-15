@@ -1,0 +1,6 @@
+.claude/
+node_modules/
+*.log
+nodal-deploy.zip
+server.js
+START APP.bat
