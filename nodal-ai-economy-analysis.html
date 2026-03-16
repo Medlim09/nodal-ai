@@ -1146,6 +1146,94 @@ body::before{
   border-radius:12px;pointer-events:all;cursor:pointer;
   backdrop-filter:blur(2px);
 }
+
+/* ═══════════════════════════════════════════════════
+   CLEAN MOBILE LAYOUT (≤ 600px)
+═══════════════════════════════════════════════════ */
+@media(max-width:600px){
+
+  /* Header — strip clutter, keep essentials */
+  .hdr-clock { display:none !important; }
+  #pwaInstallBtn { display:none !important; }
+  .hdr-title { font-size:14px; }
+  .hdr-title span { display:none; }
+  .hdr-btn-ghost { display:none; }
+  #header { padding:0 12px; gap:8px; }
+
+  /* Page */
+  .page { padding:12px 12px 80px; }
+  .page-hdr { margin-bottom:14px; }
+  .page-hdr h1 { font-size:22px; }
+  .page-hdr p { font-size:12px; }
+
+  /* Cards — bigger, breathable */
+  .card { padding:14px 14px 12px; border-radius:14px; }
+  .card-label { font-size:10px; margin-bottom:8px; }
+  .stat-val { font-size:30px; margin-bottom:5px; }
+  .stat-sub { font-size:12px; gap:5px; }
+  .pill { font-size:11px; padding:3px 8px; border-radius:5px; }
+
+  /* Ticker strip */
+  .ticker-strip { padding:10px 14px; gap:20px; }
+  .t-sym { font-size:10px; }
+  .t-val { font-size:14px; }
+  .t-chg { font-size:11px; }
+
+  /* Tables — hide low-priority columns */
+  /* Stocks: hide Sector, Mkt Cap, P/E */
+  #stocksTable th:nth-child(2), #stocksTable td:nth-child(2),
+  #stocksTable th:nth-child(5), #stocksTable td:nth-child(5),
+  #stocksTable th:nth-child(6), #stocksTable td:nth-child(6) { display:none; }
+  /* Crypto: hide rank #, Mkt Cap, Dominance */
+  #cryptoTable th:nth-child(1), #cryptoTable td:nth-child(1),
+  #cryptoTable th:nth-child(5), #cryptoTable td:nth-child(5),
+  #cryptoTable th:nth-child(6), #cryptoTable td:nth-child(6) { display:none; }
+  /* Forex: hide extra columns if present */
+  #forexTable th:nth-child(4), #forexTable td:nth-child(4),
+  #forexTable th:nth-child(5), #forexTable td:nth-child(5) { display:none; }
+
+  /* Table text sizing */
+  .mkt-table { font-size:13px; }
+  .mkt-table th { font-size:10px; padding:9px 8px; }
+  .mkt-table td { padding:10px 8px; }
+  .sym-nm { font-size:13px; }
+  .sym-full { font-size:10px; }
+  .sym-ico { width:28px; height:28px; font-size:13px; }
+  .sym-cell { gap:8px; }
+
+  /* Earn rows */
+  .earn-row { padding:13px 0; gap:11px; }
+  .earn-info > div:first-child { font-size:14px; }
+  .earn-metric { font-size:11px; }
+
+  /* Progress bars */
+  .prog-row { margin-bottom:12px; }
+  .prog-lbl { font-size:12px; }
+
+  /* Macro eco indicators */
+  #ecoIndicEl > div { padding:11px 0; }
+  #ecoIndicEl > div > div:first-child > div:first-child { font-size:13px; }
+
+  /* Grids */
+  .g2,.g3,.g4,.g5 { gap:10px; }
+
+  /* Stock tab buttons */
+  .tab-bar { gap:4px; overflow-x:auto; padding-bottom:4px; flex-wrap:nowrap; }
+  .tab-btn { font-size:11px; padding:6px 12px; white-space:nowrap; }
+
+  /* AI insight box */
+  .ai-output { font-size:13px; line-height:1.7; }
+  .ai-sub { font-size:11px; }
+
+  /* Sections spacing */
+  .sec-hdr { font-size:11px; margin:18px 0 10px; }
+
+  /* Crisis strip */
+  #crisisStrip { height:42px; padding:0 12px; }
+
+  /* Bottom nav safe area */
+  body { padding-bottom: 0; }
+}
 </style>
 </head>
 <body>
@@ -1372,7 +1460,7 @@ body::before{
   <button class="hdr-btn hdr-btn-ghost" onclick="lgLogout()" title="Sign out" style="font-size:11px;">⎋ Logout</button>
   <button class="hdr-btn hdr-btn-primary" onclick="refreshAll()">⟳ Refresh</button>
   <button id="pwaInstallBtn" onclick="pwaInstall()" title="Install as App"
-    style="display:none;align-items:center;gap:5px;background:linear-gradient(135deg,#4f8ef7,#7c3aed);
+    style="display:none !important;align-items:center;gap:5px;background:linear-gradient(135deg,#4f8ef7,#7c3aed);
     border:none;border-radius:8px;padding:5px 12px;cursor:pointer;color:#fff;font-size:11px;font-weight:700;">
     📲 Install App
   </button>
@@ -3683,119 +3771,119 @@ function renderCrisisPrep(){
 const CRISIS = {
   indicators:[
     {
-      id:'yield_curve', name:'Yield Curve Inversion', score:72, level:'high',
-      icon:'📐', value:'-37.7bps (2Y-10Y)',
-      desc:'Deeply inverted yield curve — historically precedes recession by 12–18 months.',
+      id:'yield_curve', name:'Yield Curve Inversion', score:50, level:'med',
+      icon:'📐', value:'— (fetching live)',
+      desc:'Yield curve spread between 3M and 10Y Treasuries — key recession indicator.',
       signals:[
-        {t:'2Y yield (4.689%) > 10Y yield (4.312%) — INVERTED', danger:true},
-        {t:'Inversion persisted > 18 months — elevated recession risk', danger:true},
-        {t:'30Y yield (4.474%) > 10Y — partial steepening at long end', danger:false},
+        {t:'Fetching live yield data from FRED / Yahoo Finance...', danger:false},
         {t:'Historical hit rate: 7/8 recessions preceded by inversion', danger:true},
+        {t:'Inverted curve historically precedes recession by 12–18 months', danger:true},
+        {t:'Watch for re-steepening — often signals recession onset', danger:false},
       ],
-      hist:'Current inversion deeper than pre-2001 recession, similar to 2006-2007 level.'
+      hist:'2006-2007: Curve inverted for 18 months before GFC. 2019: brief inversion before COVID.'
     },
     {
-      id:'credit_stress', name:'Credit Market Stress', score:61, level:'high',
-      icon:'💳', value:'HY Spread +321bps',
-      desc:'High-yield credit spreads elevated but not at crisis levels. Investment grade holding.',
+      id:'credit_stress', name:'Credit Market Stress', score:48, level:'med',
+      icon:'💳', value:'HY Spreads — live',
+      desc:'High-yield and investment grade credit spreads signal stress in corporate debt markets.',
       signals:[
-        {t:'HY spreads +321bps — above 5-year average of 280bps', danger:true},
-        {t:'IG spreads +98bps — normal range (80–120bps)', danger:false},
-        {t:'CCC-rated bonds +820bps — distressed territory approaching', danger:true},
-        {t:'Bank lending standards tightening (SLOOS survey)', danger:true},
+        {t:'HY spreads — watch for sustained move above 400bps (crisis signal)', danger:false},
+        {t:'IG spreads — normal range 80–120bps; elevated if above 150bps', danger:false},
+        {t:'CCC-rated bonds — distressed if spreads exceed 900bps', danger:true},
+        {t:'Bank lending standards (SLOOS survey) — tightening trend present', danger:true},
       ],
-      hist:'Pre-GFC 2007: HY spreads were ~250bps before spiking to 1800bps.'
+      hist:'Pre-GFC 2007: HY spreads ~250bps before spiking to 1800bps in 2008.'
     },
     {
-      id:'volatility', name:'Market Volatility (VIX)', score:22, level:'low',
-      icon:'⚡', value:'VIX 14.82',
-      desc:'Low volatility indicates complacency — often precedes sharp corrections.',
+      id:'volatility', name:'Market Volatility (VIX)', score:25, level:'low',
+      icon:'⚡', value:'VIX — (fetching live)',
+      desc:'VIX measures 30-day implied volatility of S&P 500 options — the "fear gauge".',
       signals:[
-        {t:'VIX 14.82 — below historical avg of 19.5 (complacency zone)', danger:false},
-        {t:'VVIX (vol of vol) elevated — rapid spike risk present', danger:true},
-        {t:'Skew index elevated — put protection demand rising', danger:false},
-        {t:'Options market pricing calm for next 30 days', danger:false},
+        {t:'Fetching live VIX from Yahoo Finance...', danger:false},
+        {t:'VIX below 15 = complacency zone — historically precedes corrections', danger:false},
+        {t:'VIX above 30 = market panic; above 50 = systemic crisis', danger:true},
+        {t:'VVIX elevated — vol-of-vol spike risk if macro shock occurs', danger:true},
       ],
-      hist:'VIX below 15 appeared 6 months before the 2020 COVID crash.'
+      hist:'VIX below 15 preceded the 2020 COVID crash. VIX hit 89 during 2008 GFC.'
     },
     {
-      id:'inflation', name:'Inflation Pressure', score:58, level:'med',
-      icon:'💸', value:'CPI 3.2% YoY',
-      desc:'Sticky inflation above Fed 2% target prolonging high rates. Not hyperinflationary.',
+      id:'inflation', name:'Inflation Pressure', score:50, level:'med',
+      icon:'💸', value:'CPI — (fetching live)',
+      desc:'CPI and Core PCE relative to Fed 2% target — sticky inflation prolongs high rates.',
       signals:[
-        {t:'CPI 3.2% — above 2% Fed target for 36+ consecutive months', danger:true},
-        {t:'Core PCE 2.8% — stickier components remain elevated', danger:true},
-        {t:'Shelter inflation +5.7% — lagging but persistent', danger:true},
-        {t:'5Y breakeven at 2.41% — anchored expectations', danger:false},
+        {t:'Fetching live CPI from BLS.gov...', danger:false},
+        {t:'Core PCE — fetching from FRED...', danger:false},
+        {t:'Shelter inflation component — lagging but persistent upward pressure', danger:true},
+        {t:'5Y inflation breakevens — market inflation expectations indicator', danger:false},
       ],
-      hist:'1970s stagflation: CPI peaked at 14.8%. Current episode is mild by comparison.'
+      hist:'1970s stagflation: CPI peaked at 14.8%. 2022 peak: 9.1%. Current: normalizing.'
     },
     {
-      id:'banking', name:'Banking System Stress', score:28, level:'low',
-      icon:'🏦', value:'BTFP wound down',
-      desc:'Banking system broadly stable after 2023 SVB/CS shocks. CRE exposure remains.',
+      id:'banking', name:'Banking System Stress', score:30, level:'low',
+      icon:'🏦', value:'Broadly stable (2026)',
+      desc:'Banking system stable after 2023 SVB/CS shocks. Commercial Real Estate remains key risk.',
       signals:[
-        {t:'Fed BTFP facility expired — emergency backstop removed', danger:false},
-        {t:'Commercial Real Estate loans at risk — $1.5T maturing 2024-26', danger:true},
-        {t:'Bank reserves at $3.5T — above minimum requirements', danger:false},
-        {t:'FDIC-insured bank failures: 5 in 2023 (elevated but contained)', danger:false},
+        {t:'Fed BTFP facility fully wound down — emergency backstop removed', danger:false},
+        {t:'CRE loan maturities: ~$1.5T maturing 2024–2027 — refinancing risk', danger:true},
+        {t:'Bank reserves above $3T — adequate liquidity buffer', danger:false},
+        {t:'Regional bank CRE exposure: office vacancy rates at historic highs', danger:true},
       ],
-      hist:'2008 GFC: 25 major bank failures. 2023: 3 significant failures (regional focus).'
+      hist:'2008 GFC: 25 major bank failures. 2023: 3 (Silicon Valley Bank, Signature, First Republic).'
     },
     {
-      id:'debt', name:'Sovereign Debt Risk', score:65, level:'high',
-      icon:'🏛️', value:'Debt/GDP 123%',
-      desc:'US federal debt at $34T, 123% of GDP. Interest payments consuming growing share of budget.',
+      id:'debt', name:'Sovereign Debt Risk', score:72, level:'high',
+      icon:'🏛️', value:'Debt/GDP ~124%',
+      desc:'US federal debt ~$36T as of 2026. Interest payments now the single largest budget item.',
       signals:[
-        {t:'US national debt: $34.0 trillion (record high)', danger:true},
-        {t:'Annual interest expense: $870B — now largest budget item', danger:true},
-        {t:'Deficit: $1.7T (2023) — structural not cyclical', danger:true},
-        {t:'Fitch downgraded US credit from AAA to AA+ (Aug 2023)', danger:true},
+        {t:'US national debt: ~$36 trillion — continues rising structurally', danger:true},
+        {t:'Annual interest expense: ~$1.1T — surpassed defense spending', danger:true},
+        {t:'Deficit: ~$1.8T+ annually — structural, not cyclical', danger:true},
+        {t:'Fitch (AA+) and Moody\'s negative outlook — US credit under pressure', danger:true},
       ],
-      hist:'Japan debt/GDP is 260% — but held domestically. US profile different (global reserve).'
+      hist:'Japan debt/GDP is 260% but held domestically. US debt is global reserve currency risk.'
     },
     {
-      id:'liquidity', name:'Liquidity Conditions', score:31, level:'low',
-      icon:'💧', value:'Fed QT $60B/mo',
-      desc:'Fed balance sheet reduction ongoing but markets functioning. Dollar liquidity ample.',
+      id:'liquidity', name:'Liquidity Conditions', score:28, level:'low',
+      icon:'💧', value:'QT paused (2024)',
+      desc:'Fed paused QT in 2024. Balance sheet run-off at reduced pace. Dollar liquidity ample.',
       signals:[
-        {t:'Fed QT pace $60B/mo — gradual drain on reserves', danger:false},
-        {t:'Repo market stable — overnight rates near FF target', danger:false},
+        {t:'Fed QT pace reduced — reserve drain slowed significantly', danger:false},
+        {t:'Repo market stable — overnight rates near Fed funds target', danger:false},
         {t:'Dollar swap lines active — international USD demand met', danger:false},
-        {t:'Money market funds at $6.1T — record high (dry powder)', danger:false},
+        {t:'Money market funds ~$7T — record high (significant dry powder)', danger:false},
       ],
-      hist:'2019 Repo crisis: overnight rates spiked to 10%. Not repeating currently.'
+      hist:'2019 Repo crisis: overnight rates spiked to 10%. Current reserves remain ample.'
     },
     {
-      id:'housing', name:'Housing Market Stress', score:54, level:'med',
-      icon:'🏠', value:'30Y Mortgage 7.1%',
-      desc:'Affordability at historic lows. Existing home sales frozen. New construction holding.',
+      id:'housing', name:'Housing Market Stress', score:52, level:'med',
+      icon:'🏠', value:'30Y Mortgage ~6.5–7%',
+      desc:'Affordability at historic lows despite modest Fed cuts. Existing home sales frozen.',
       signals:[
-        {t:'30-year mortgage rate 7.1% — highest since 2000', danger:true},
-        {t:'Housing affordability index at 40-year lows', danger:true},
-        {t:'Existing home sales -38% from 2021 peak', danger:true},
-        {t:'Home prices resilient (+3% YoY) — no price crash yet', danger:false},
+        {t:'30-year mortgage rate ~6.5–7% — affordability near multi-decade lows', danger:true},
+        {t:'Housing affordability index near 40-year lows despite rate cuts', danger:true},
+        {t:'Existing home sales depressed — "lock-in effect" from low 2020-21 rates', danger:true},
+        {t:'Home prices remain elevated — no broad price correction so far', danger:false},
       ],
-      hist:'2008 housing crash: prices fell 30%+ with widespread mortgage defaults.'
+      hist:'2008 housing crash: prices fell 30%+ nationally with widespread mortgage defaults.'
     },
     {
-      id:'geopolitical', name:'Geopolitical Risk', score:67, level:'high',
-      icon:'🌍', value:'3 Active Conflicts',
-      desc:'Ukraine-Russia war, Middle East tensions, and Taiwan strait risk elevated.',
+      id:'geopolitical', name:'Geopolitical Risk', score:72, level:'high',
+      icon:'🌍', value:'Elevated (2026)',
+      desc:'Multiple active risk vectors: trade wars, regional conflicts, US-China tech decoupling.',
       signals:[
-        {t:'Russia-Ukraine war: energy supply disruption risk ongoing', danger:true},
-        {t:'Middle East (Gaza/Red Sea): shipping cost inflation +300%', danger:true},
-        {t:'US-China tensions: semiconductor export controls escalating', danger:true},
-        {t:'Global PMI manufacturing in contraction (48.3)', danger:true},
+        {t:'US-China trade war escalation — tariffs and tech export controls broadening', danger:true},
+        {t:'Russia-Ukraine conflict ongoing — European energy security risk', danger:true},
+        {t:'Middle East tensions — Red Sea shipping disruptions partially resolved', danger:true},
+        {t:'Taiwan strait risk elevated — semiconductor supply chain concentration', danger:true},
       ],
-      hist:'1973 oil embargo triggered stagflation. Geopolitical risk now more diversified.'
+      hist:'1973 oil embargo triggered stagflation. 2026 geopolitical risk is more multi-vector.'
     },
   ],
   historical:[
     {crisis:'2008 Global Financial Crisis', yieldCurve:'-40bps', creditSpread:'+1800bps HY', vix:'80', debt:'68%', housing:'Bubble burst', outcome:'S&P -57%'},
     {crisis:'2001 Dot-Com / 9-11', yieldCurve:'-40bps', creditSpread:'+700bps HY', vix:'43', debt:'55%', housing:'Stable', outcome:'S&P -49%'},
     {crisis:'1998 LTCM Crisis', yieldCurve:'+20bps', creditSpread:'+450bps HY', vix:'45', debt:'60%', housing:'Stable', outcome:'S&P -20%'},
-    {crisis:'Current (Mar 2026)', yieldCurve:'-38bps ⚠️', creditSpread:'+321bps HY', vix:'14.82 ✓', debt:'123% ⚠️', housing:'Frozen', outcome:'TBD'},
+    {crisis:'Current (Mar 2026)', yieldCurve:'— live', creditSpread:'— live', vix:'— live', debt:'~124% ⚠️', housing:'Frozen', outcome:'TBD'},
   ]
 };
 
@@ -5366,6 +5454,7 @@ async function fetchLiveStocks(){
   const proxyFns = [
     url => `https://corsproxy.io/?${encodeURIComponent(url)}`,
     url => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+    url => `https://thingproxy.freeboard.io/fetch/${url}`,
     url => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
   ];
 
@@ -5407,9 +5496,21 @@ async function fetchLiveStocks(){
     const q = {};
     results.forEach(r => { q[r.symbol] = r; });
 
-    const fmtPct = r => (r.regularMarketChangePercent>=0?'+':'')+r.regularMarketChangePercent?.toFixed(2)+'%';
-    const fmtPts = r => (r.regularMarketChange>=0?'+':'')+r.regularMarketChange?.toFixed(2);
-    const isUp   = r => r.regularMarketChangePercent >= 0;
+    // Handle BOTH formatted=true (object) and formatted=false (number) Yahoo responses
+    // Some proxies strip query params causing formatted=true to be returned
+    const getNum = v => {
+      if(v === null || v === undefined) return NaN;
+      if(typeof v === 'number') return v;
+      if(typeof v === 'object' && 'raw' in v) return v.raw;
+      return parseFloat(v);
+    };
+    const getPrice  = r => getNum(r.regularMarketPrice);
+    const getChgPct = r => getNum(r.regularMarketChangePercent);
+    const getChg    = r => getNum(r.regularMarketChange);
+
+    const fmtPct = r => { const v=getChgPct(r); return (v>=0?'+':'')+v.toFixed(2)+'%'; };
+    const fmtPts = r => { const v=getChg(r);    return (v>=0?'+':'')+v.toFixed(2); };
+    const isUp   = r => getChgPct(r) >= 0;
 
     // ── Update ticker strip ──
     const tickerSym = {
@@ -5420,15 +5521,16 @@ async function fetchLiveStocks(){
     MD.ticker = MD.ticker.map(t => {
       const sym = tickerSym[t.s];
       if(!sym || !q[sym]) return t;
-      const r = q[sym]; const p = r.regularMarketPrice;
+      const r = q[sym]; const p = getPrice(r);
+      if(isNaN(p)) return t;
       let v = t.v;
-      if(t.s==='10Y')                        v = p.toFixed(3)+'%';
-      else if(['Gold','Silver'].includes(t.s)) v = '$'+Math.round(p).toLocaleString('en-US');
-      else if(t.s==='WTI')                   v = '$'+p.toFixed(2);
-      else if(t.s==='Copper')                v = '$'+p.toFixed(2);
-      else if(t.s==='DXY')                   v = p.toFixed(2);
-      else if(t.s==='VIX')                   v = p.toFixed(2);
-      else                                   v = p.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+      if(t.s==='10Y')                          v = p.toFixed(3)+'%';
+      else if(['Gold','Silver'].includes(t.s))  v = '$'+Math.round(p).toLocaleString('en-US');
+      else if(t.s==='WTI')                     v = '$'+p.toFixed(2);
+      else if(t.s==='Copper')                  v = '$'+p.toFixed(2);
+      else if(t.s==='DXY')                     v = p.toFixed(2);
+      else if(t.s==='VIX')                     v = p.toFixed(2);
+      else                                     v = p.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
       return {...t, v, c:fmtPct(r), up:isUp(r)};
     });
 
@@ -5437,7 +5539,8 @@ async function fetchLiveStocks(){
     MD.indices = MD.indices.map(idx => {
       const sym = Object.keys(idxSym).find(k=>idxSym[k]===idx.abbr);
       if(!sym || !q[sym]) return idx;
-      const r = q[sym]; const p = r.regularMarketPrice;
+      const r = q[sym]; const p = getPrice(r);
+      if(isNaN(p)) return idx;
       return {...idx,
         p: p.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}),
         c: fmtPct(r), pts: fmtPts(r), up: isUp(r)
@@ -5448,8 +5551,9 @@ async function fetchLiveStocks(){
     const updateList = list => list.map(s => {
       const sym = s.s === 'BRK.B' ? 'BRK-B' : s.s;
       if(!q[sym]) return s;
-      const r = q[sym];
-      return {...s, p:r.regularMarketPrice?.toFixed(2), c:fmtPct(r), up:isUp(r)};
+      const r = q[sym]; const p = getPrice(r);
+      if(isNaN(p)) return s;
+      return {...s, p:p.toFixed(2), c:fmtPct(r), up:isUp(r)};
     });
     if(MD.stocks?.large)   MD.stocks.large   = updateList(MD.stocks.large);
     if(MD.stocks?.tech)    MD.stocks.tech    = updateList(MD.stocks.tech);
@@ -5460,9 +5564,9 @@ async function fetchLiveStocks(){
     const trackSyms = ['AAPL','MSFT','NVDA','AMZN','GOOGL','META','AMD','TSLA','JPM','XOM','WFC','PFE','CVX','T','V','NFLX','INTC','CRM','LLY','BRK-B'];
     const liveStocks = trackSyms.map(sym => {
       const r = q[sym]; if(!r) return null;
-      const pct = r.regularMarketChangePercent;
-      return {sym, name:r.shortName||sym, p:r.regularMarketPrice?.toFixed(2),
-              c:fmtPct(r), up:isUp(r), pct};
+      const p = getPrice(r); const pct = getChgPct(r);
+      if(isNaN(p) || isNaN(pct)) return null;
+      return {sym, name:r.shortName||sym, p:p.toFixed(2), c:fmtPct(r), up:isUp(r), pct};
     }).filter(Boolean).sort((a,b)=>b.pct-a.pct);
 
     MD.gainers = liveStocks.slice(0,5).map(s=>({...s, signal: s.pct>2?'LONG':'WATCH'}));
@@ -5477,15 +5581,17 @@ async function fetchLiveStocks(){
     };
     MD.keyStats = MD.keyStats.map(ks => {
       const km = ksMap[ks.l]; if(!km || !q[km.sym]) return ks;
-      const r = q[km.sym];
-      return {...ks, v:km.fmt(r.regularMarketPrice), c:fmtPct(r), up:isUp(r)};
+      const r = q[km.sym]; const p = getPrice(r);
+      if(isNaN(p)) return ks;
+      return {...ks, v:km.fmt(p), c:fmtPct(r), up:isUp(r)};
     });
 
     // ── Update commodities list ──
     if(MD.commodities){
       MD.commodities = MD.commodities.map(cm => {
         if(!cm.sym || !q[cm.sym]) return cm;
-        const r = q[cm.sym]; const p = r.regularMarketPrice;
+        const r = q[cm.sym]; const p = getPrice(r);
+        if(isNaN(p)) return cm;
         let pv;
         if(cm.s==='Gold'||cm.s==='Silver') pv = '$'+p.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
         else if(cm.s==='Copper') pv = '$'+p.toFixed(3);
@@ -5499,8 +5605,9 @@ async function fetchLiveStocks(){
     if(MD.bonds){
       MD.bonds = MD.bonds.map(b => {
         if(!b.sym || !q[b.sym]) return b;
-        const r = q[b.sym];
-        return {...b, v:r.regularMarketPrice?.toFixed(3)+'%', c:fmtPct(r), up:isUp(r)};
+        const r = q[b.sym]; const p = getPrice(r);
+        if(isNaN(p)) return b;
+        return {...b, v:p.toFixed(3)+'%', c:fmtPct(r), up:isUp(r)};
       });
     }
 
@@ -5517,6 +5624,8 @@ async function fetchLiveStocks(){
     updateLiveDataStatus('stocks', true);
     document.getElementById('lastUpdate').textContent =
       new Date().toLocaleTimeString('en-US',{timeZone:'America/New_York',hour12:true})+' ET (Live)';
+    // Update crisis detector with live VIX
+    updateCrisisFromLiveData();
 
   } catch(e){
     console.warn('Live stocks/indices unavailable:', e.message);
@@ -5645,6 +5754,8 @@ async function fetchLiveMacro(){
 
   renderMacro();
   updateLiveDataStatus('macro', gotAny);
+  // Update crisis detector with live CPI, yield curve, Fed rate
+  updateCrisisFromLiveData();
 }
 
 /* ══════════════════════════════════════════════════
@@ -5710,6 +5821,156 @@ async function fetchLiveEarnings(){
 
   renderEarnings();
   updateLiveDataStatus('earnings', beats.length>0 || upcoming.length>0);
+}
+
+/* ══════════════════════════════════════════════════
+   CRISIS DETECTOR — Live data updater
+   Reads from already-fetched MD.indices (VIX), MD.macroStats (CPI, yield curve, Fed rate)
+   and recalculates CRISIS.indicators scores dynamically
+══════════════════════════════════════════════════ */
+function updateCrisisFromLiveData(){
+  const getStat = id => MD.macroStats?.find(m => m.id === id) || {};
+  let changed = false;
+
+  // ── 1. VIX → volatility indicator ──────────────────────
+  const vixEntry = MD.indices?.find(i => i.abbr === 'VIX');
+  if(vixEntry && vixEntry.p && vixEntry.p !== '—' && vixEntry.p !== '-'){
+    const vix = parseFloat(String(vixEntry.p).replace(/,/g,''));
+    if(!isNaN(vix)){
+      const ind = CRISIS.indicators.find(i => i.id === 'volatility');
+      if(ind){
+        ind.value = `VIX ${vix.toFixed(2)}`;
+        if(vix > 40)      { ind.score = 90; ind.level = 'high'; }
+        else if(vix > 30) { ind.score = 75; ind.level = 'high'; }
+        else if(vix > 20) { ind.score = 55; ind.level = 'med';  }
+        else if(vix > 15) { ind.score = 35; ind.level = 'low';  }
+        else              { ind.score = 25; ind.level = 'low';  }
+        ind.signals = [
+          {t:`VIX ${vix.toFixed(2)} — ${vix < 15 ? 'below' : 'near/above'} historical avg 19.5 (${vix < 17 ? 'complacency zone ⚠️' : vix > 25 ? 'elevated fear' : 'normal range'})`, danger: vix < 15 || vix > 25},
+          {t:`Options market pricing ${vix < 20 ? 'calm' : 'elevated stress'} for next 30 days`, danger: vix >= 20},
+          {t:'VIX above 30 = market panic; above 50 = systemic crisis threshold', danger: vix > 30},
+          {t:'VVIX (vol of vol) — rapid spike risk if macro shock materialises', danger: true},
+        ];
+        changed = true;
+      }
+    }
+  }
+
+  // ── 2. Yield curve spread → yield_curve indicator ───────
+  const ycStat = getStat('realyield');
+  if(ycStat.v && ycStat.v !== '—'){
+    const spread = parseInt(ycStat.v); // e.g. -37 from "-37bps"
+    if(!isNaN(spread)){
+      const inv = spread < 0;
+      const ind = CRISIS.indicators.find(i => i.id === 'yield_curve');
+      if(ind){
+        ind.value = `${spread >= 0 ? '+' : ''}${spread}bps (3M-10Y)`;
+        if(spread < -50)      { ind.score = 85; ind.level = 'high'; }
+        else if(spread < -20) { ind.score = 70; ind.level = 'high'; }
+        else if(spread < 0)   { ind.score = 50; ind.level = 'med';  }
+        else if(spread < 50)  { ind.score = 28; ind.level = 'low';  }
+        else                  { ind.score = 15; ind.level = 'low';  }
+        ind.signals = [
+          {t:`3M-10Y spread: ${spread >= 0 ? '+' : ''}${spread}bps — ${inv ? 'INVERTED ⚠️' : 'Normal curve ✓'}`, danger: inv},
+          {t:`Inversion ${inv ? 'active — recession signal elevated' : 'resolved — improving outlook'}`, danger: inv},
+          {t:'Historical hit rate: 7/8 US recessions preceded by sustained inversion', danger: inv},
+          {t:`Curve ${inv ? `inverted at ${spread}bps — monitor for deepening` : 'steepening — economic expansion signal'}`, danger: spread < -30},
+        ];
+        changed = true;
+      }
+    }
+  }
+
+  // ── 3. CPI + Core PCE → inflation indicator ─────────────
+  const cpiStat = getStat('cpi');
+  if(cpiStat.v && cpiStat.v !== '—'){
+    const cpi = parseFloat(cpiStat.v);
+    if(!isNaN(cpi)){
+      const pceStat = getStat('pce');
+      const pce = pceStat.v && pceStat.v !== '—' ? parseFloat(pceStat.v) : null;
+      const ind = CRISIS.indicators.find(i => i.id === 'inflation');
+      if(ind){
+        ind.value = `CPI ${cpi.toFixed(1)}% YoY`;
+        if(cpi > 6)      { ind.score = 85; ind.level = 'high'; }
+        else if(cpi > 4) { ind.score = 68; ind.level = 'high'; }
+        else if(cpi > 3) { ind.score = 55; ind.level = 'med';  }
+        else if(cpi > 2) { ind.score = 38; ind.level = 'low';  }
+        else             { ind.score = 20; ind.level = 'low';  }
+        ind.desc = `CPI ${cpi.toFixed(1)}% YoY${pce ? `, Core PCE ${pce.toFixed(1)}%` : ''}. ${cpi > 2.5 ? 'Above Fed 2% target — higher rates likely sustained.' : 'Near Fed target — rate cuts increasingly possible.'}`;
+        ind.signals = [
+          {t:`CPI ${cpi.toFixed(1)}% — ${cpi > 2 ? 'above' : 'at/below'} Fed 2% target${cpi > 3 ? ' ⚠️' : ' ✓'}`, danger: cpi > 2.5},
+          {t:pce ? `Core PCE ${pce.toFixed(1)}% — ${pce > 2.5 ? 'sticky components elevated' : 'approaching 2% target'}` : 'Core PCE — loading from FRED...', danger: pce ? pce > 2.5 : false},
+          {t:'Shelter inflation component — lagging but persistent upward pressure', danger: cpi > 3},
+          {t:`5Y inflation breakevens — market pricing ${cpi < 2.5 ? 'inflation under control' : 'continued above-target inflation'}`, danger: cpi > 3.5},
+        ];
+        changed = true;
+      }
+    }
+  }
+
+  // ── 4. Update historical table "Current" row ─────────────
+  const ycVal = CRISIS.indicators.find(i=>i.id==='yield_curve')?.value || '—';
+  const vixVal = CRISIS.indicators.find(i=>i.id==='volatility')?.value || '—';
+  const cpiVal = CRISIS.indicators.find(i=>i.id==='inflation')?.value || '—';
+  if(CRISIS.historical){
+    const cur = CRISIS.historical.find(h => h.crisis && h.crisis.includes('Current'));
+    if(cur){
+      cur.yieldCurve = ycVal.replace('(3M-10Y)','').trim() || cur.yieldCurve;
+      cur.vix = vixVal.replace('VIX ','') || cur.vix;
+    }
+  }
+
+  if(!changed) return;
+
+  // ── 5. Re-render crisis strip meters (top bar) ───────────
+  renderCrisisStrip();
+
+  // ── 6. Re-render crisis page cards if open ───────────────
+  if(document.getElementById('pg-crisis')?.classList.contains('active')){
+    renderCrisisCards();
+  }
+}
+
+function renderCrisisStrip(){
+  const strip = document.getElementById('crisisStrip');
+  if(!strip) return;
+
+  // Map indicator ids to strip meter elements (by title attribute)
+  const titleMap = {
+    yield_curve:  'Yield Curve Inversion',
+    credit_stress:'Credit Stress',
+    volatility:   'Volatility',
+    inflation:    'Inflation Pressure',
+    banking:      'Banking System Stress',
+    debt:         'Debt Sustainability',
+    liquidity:    'Liquidity Conditions',
+  };
+
+  CRISIS.indicators.forEach(ind => {
+    const title = titleMap[ind.id];
+    if(!title) return;
+    const meter = strip.querySelector(`.crisis-meter[title="${title}"]`);
+    if(!meter) return;
+    // Update level class
+    meter.className = `crisis-meter level-${ind.level}`;
+    // Update fill width
+    const fill = meter.querySelector('.cm-fill');
+    if(fill) fill.style.width = ind.score + '%';
+    // Update value text
+    const val = meter.querySelector('.cm-val');
+    if(val) val.textContent = ind.score;
+  });
+
+  // Update overall score badge
+  const avg = Math.round(CRISIS.indicators.reduce((s,i) => s + i.score, 0) / CRISIS.indicators.length);
+  const overall = document.getElementById('crisisOverall');
+  if(overall){
+    const lvl = avg >= 65 ? 'danger' : avg >= 45 ? 'caution' : 'ok';
+    const icon = avg >= 65 ? '🔴' : avg >= 45 ? '⚠️' : '✅';
+    const label = avg >= 65 ? 'HIGH RISK' : avg >= 45 ? 'CAUTION' : 'LOW RISK';
+    overall.className = `cs-overall ${lvl}`;
+    overall.textContent = `${icon} ${label} · Score: ${avg}/100`;
+  }
 }
 
 /* ══════════════════════════════════════════════════
@@ -6470,36 +6731,7 @@ window.addEventListener('DOMContentLoaded',()=>{
     if(badge && !csGreeted) badge.style.display = 'flex';
   }, 2000);
 
-  // ── PWA: Register Service Worker ──
-  if('serviceWorker' in navigator){
-    navigator.serviceWorker.register('./sw.js')
-      .then(reg => console.log('NODAL AI SW registered:', reg.scope))
-      .catch(err => console.warn('SW registration failed:', err));
-  }
-
-  // ── PWA: Install Prompt ──
-  let _pwaInstallEvent = null;
-  window.addEventListener('beforeinstallprompt', e => {
-    e.preventDefault();
-    _pwaInstallEvent = e;
-    // Show install button in header
-    const btn = document.getElementById('pwaInstallBtn');
-    if(btn) btn.style.display = 'flex';
-  });
-  window.addEventListener('appinstalled', () => {
-    const btn = document.getElementById('pwaInstallBtn');
-    if(btn) btn.style.display = 'none';
-    _pwaInstallEvent = null;
-  });
-  window.pwaInstall = async function(){
-    if(!_pwaInstallEvent) return;
-    _pwaInstallEvent.prompt();
-    const { outcome } = await _pwaInstallEvent.userChoice;
-    if(outcome === 'accepted'){
-      const btn = document.getElementById('pwaInstallBtn');
-      if(btn) btn.style.display = 'none';
-    }
-  };
+  // PWA install prompt disabled — mobile-optimised web experience only
 
   // ── Mobile: show bottom nav on small screens ──
   const resizeHandler = () => {
