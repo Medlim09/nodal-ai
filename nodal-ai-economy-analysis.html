@@ -108,15 +108,22 @@ body::before{
 .sb-section-lbl{font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;padding:0 8px 8px;}
 .nav-item{
   display:flex;align-items:center;gap:10px;
-  padding:8px 10px;border-radius:8px;
+  padding:5px 10px;border-radius:8px;
   cursor:pointer;color:var(--muted2);
   font-size:12.5px;font-weight:600;
   border:1px solid transparent;
   margin-bottom:1px;transition:all .15s;
+  box-sizing:border-box;
 }
 .nav-item:hover{background:rgba(61,142,255,.06);color:var(--text);}
 .nav-item.active{background:var(--bbg);color:var(--blue);border-color:rgba(61,142,255,.18);}
 .nav-icon{font-size:14px;width:18px;text-align:center;flex-shrink:0;}
+/* Dual language nav labels */
+.nav-label-wrap{display:flex;flex-direction:column;flex:1;min-width:0;padding:3px 0;}
+.nav-label-primary{display:block;line-height:1.4;}
+.nav-label-en{display:block;font-size:9px;font-weight:400;color:var(--muted2);opacity:.65;line-height:1.3;margin-top:2px;letter-spacing:.01em;white-space:nowrap;overflow:visible;}
+.nav-item.active .nav-label-en{color:var(--blue);opacity:.5;}
+.nav-item:hover .nav-label-en{opacity:.85;}
 .nav-badge{
   margin-left:auto;padding:1px 6px;
   border-radius:10px;font-size:9.5px;font-weight:800;
@@ -1445,10 +1452,10 @@ body::before{
     style="background:var(--bg3);border:1px solid var(--border2);color:var(--text);padding:4px 8px;border-radius:7px;font-family:Arial,'Noto Sans',sans-serif;font-size:11px;cursor:pointer;outline:none;max-width:140px;">
     <option value="en">🇺🇸 English</option>
     <option value="es">🇪🇸 Español</option>
-    <option value="fr">🇫🇷 Français</option>
-    <option value="de">🇩🇪 Deutsch</option>
-    <option value="pt">🇧🇷 Português</option>
-    <option value="ar">🇸🇦 العربية</option>
+    <option value="ar_ae">🇦🇪 الإمارات</option>
+    <option value="ar_sa">🇸🇦 السعودية</option>
+    <option value="ar_kw">🇰🇼 الكويت</option>
+    <option value="ar_qa">🇶🇦 قطر</option>
     <option value="ja">🇯🇵 日本語</option>
     <option value="ko">🇰🇷 한국어</option>
     <option value="zh_CN">🇨🇳 简体中文</option>
@@ -2527,8 +2534,9 @@ async function callClaude(prompt, targetEl, systemMsg='') {
 
   // Language instruction for AI responses
   const langNames = {
-    en:'English', es:'Spanish', fr:'French', de:'German', pt:'Portuguese',
-    ar:'Arabic', ja:'Japanese', ko:'Korean',
+    en:'English', es:'Spanish',
+    ar:'Arabic', ar_ae:'Arabic (UAE)', ar_sa:'Arabic (Saudi Arabia)', ar_kw:'Arabic (Kuwait)', ar_qa:'Arabic (Qatar)',
+    ja:'Japanese', ko:'Korean',
     zh_CN:'Simplified Chinese', zh_TW:'Traditional Chinese',
     th:'Thai', vi:'Vietnamese', id:'Indonesian', ms:'Malay', fil:'Filipino', dz:'Dzongkha'
   };
@@ -5154,129 +5162,129 @@ const TRANSLATIONS = {
     mkt_opens:'Abre 9:30 AM ET',
     live_data:'DATOS EN VIVO', last_updated:'Datos en vivo — análisis impulsado por IA. Última actualización:',
   },
-  fr: {
-    nav_overview:'Vue d\'ensemble', nav_markets:'Marchés', nav_intelligence:'Analyse IA',
-    nav_dashboard:'Tableau de Bord', nav_watchlist:'Surveillance', nav_positions:'Signaux et Positions',
-    nav_stocks:'Actions US', nav_earnings:'Résultats', nav_bonds:'Obligations et Taux',
-    nav_commodities:'Matières Premières', nav_forex:'Devises', nav_crypto:'Cryptomonnaies',
-    nav_crisis:'Détecteur de Crise', nav_company:'Analyse d\'Entreprise', nav_macro:'Économie Macro',
-    nav_liquidity:'Carte de Liquidité', nav_heatmap:'Carte de Chaleur', nav_calendar:'Calendrier Économique',
-    nav_news:'Actualités', nav_scanner:'Scanner de Marché',
-    btn_export:'📤 Exporter', btn_ai:'🤖 Analyser IA', btn_settings:'⚙️ Paramètres', btn_refresh:'⟳ Actualiser',
-    pg_dashboard:'Tableau de Bord Intelligence Marché', pg_watchlist:'⭐ Liste de Surveillance',
-    pg_positions:'🎯 Signaux de Trading IA', pg_stocks:'📈 Actions US',
-    pg_earnings:'💰 Résultats et Revenus', pg_bonds:'🏛️ Obligations et Taux',
-    pg_commodities:'🛢️ Matières Premières', pg_forex:'💱 Devises', pg_crypto:'₿ Cryptomonnaies',
-    pg_macro:'🌐 Économie Macro', pg_liquidity:'💧 Carte de Liquidité',
-    pg_heatmap:'🔥 Carte de Chaleur', pg_calendar:'📅 Calendrier Économique',
-    pg_news:'📰 Actualités', pg_crisis:'🚨 Détecteur de Crise',
-    pg_company:'🏢 Analyse d\'Entreprise', pg_scanner:'🔍 Scanner de Marché',
-    scan_asset:'Type d\'Actif', scan_signal:'Signal', scan_minchg:'% Variation Min', scan_maxchg:'% Variation Max',
-    scan_dir:'Direction', scan_btn:'🔍 Scanner', scan_all_assets:'Tous les Actifs',
-    scan_stocks:'Actions', scan_crypto:'Crypto', scan_forex:'Devises', scan_commodities:'Matières Premières',
-    scan_all_signals:'Tous les Signaux', scan_long:'LONG Seulement', scan_short:'SHORT Seulement',
-    scan_neutral:'Neutre', scan_watch:'Surveiller', scan_both_dir:'Hausse et Baisse',
-    scan_gainers_only:'Hausse Seulement ▲', scan_losers_only:'Baisse Seulement ▼', scan_presets:'Présélections:',
-    scan_top_gainers:'🚀 Plus Grandes Hausses', scan_top_losers:'📉 Plus Grandes Baisses',
-    scan_long_signals:'📈 Signaux LONG IA', scan_short_signals:'📉 Signaux SHORT IA',
-    scan_momentum:'⚡ Momentum (+2%+)', scan_oversold:'🔄 Survendu (-2%-)',
-    scan_crypto_only:'₿ Crypto Seulement', scan_run:'Lancez un scan pour voir les résultats',
-    scan_ai_btn:'🤖 IA Analyser Résultats',
-    mkt_open:'🟢 Marché Ouvert', mkt_closed:'🔴 Marché Fermé', mkt_info:'NYSE · NASDAQ',
-    mkt_opens:'Ouvre 9h30 ET',
-    live_data:'DONNÉES EN DIRECT', last_updated:'Données en direct — analyse par IA. Dernière mise à jour :',
-  },
-  de: {
-    nav_overview:'Übersicht', nav_markets:'Märkte', nav_intelligence:'KI-Analyse',
-    nav_dashboard:'Dashboard', nav_watchlist:'Beobachtungsliste', nav_positions:'Signale & Positionen',
-    nav_stocks:'US-Aktien', nav_earnings:'Ergebnisse', nav_bonds:'Anleihen & Zinsen',
-    nav_commodities:'Rohstoffe', nav_forex:'Devisen', nav_crypto:'Kryptowährungen',
-    nav_crisis:'Krisen-Detektor', nav_company:'Unternehmensanalyse', nav_macro:'Makroökonomie',
-    nav_liquidity:'Liquiditätskarte', nav_heatmap:'Heatmap', nav_calendar:'Wirtschaftskalender',
-    nav_news:'Nachrichten', nav_scanner:'Markt-Scanner',
-    btn_export:'📤 Exportieren', btn_ai:'🤖 KI-Analyse', btn_settings:'⚙️ Einstellungen', btn_refresh:'⟳ Aktualisieren',
-    pg_dashboard:'Marktintelligenz-Dashboard', pg_watchlist:'⭐ Beobachtungsliste',
-    pg_positions:'🎯 KI-Handelssignale', pg_stocks:'📈 US-Aktien',
-    pg_earnings:'💰 Ergebnisse & Umsatz', pg_bonds:'🏛️ Anleihen & Zinsen',
-    pg_commodities:'🛢️ Rohstoffe', pg_forex:'💱 Devisen', pg_crypto:'₿ Kryptowährungen',
-    pg_macro:'🌐 Makroökonomie', pg_liquidity:'💧 Liquiditätskarte',
-    pg_heatmap:'🔥 Heatmap', pg_calendar:'📅 Wirtschaftskalender',
-    pg_news:'📰 Nachrichten', pg_crisis:'🚨 Krisen-Detektor',
-    pg_company:'🏢 Unternehmensanalyse', pg_scanner:'🔍 Markt-Scanner',
-    scan_asset:'Asset-Typ', scan_signal:'Signal', scan_minchg:'% Min-Änderung', scan_maxchg:'% Max-Änderung',
-    scan_dir:'Richtung', scan_btn:'🔍 Scannen', scan_all_assets:'Alle Assets',
-    scan_stocks:'Aktien', scan_crypto:'Krypto', scan_forex:'Devisen', scan_commodities:'Rohstoffe',
-    scan_all_signals:'Alle Signale', scan_long:'Nur LONG', scan_short:'Nur SHORT',
-    scan_neutral:'Neutral', scan_watch:'Beobachten', scan_both_dir:'Auf & Ab',
-    scan_gainers_only:'Nur Gewinner ▲', scan_losers_only:'Nur Verlierer ▼', scan_presets:'Voreinstellungen:',
-    scan_top_gainers:'🚀 Größte Gewinner', scan_top_losers:'📉 Größte Verlierer',
-    scan_long_signals:'📈 KI LONG-Signale', scan_short_signals:'📉 KI SHORT-Signale',
-    scan_momentum:'⚡ Momentum (+2%+)', scan_oversold:'🔄 Überverkauft (-2%-)',
-    scan_crypto_only:'₿ Nur Krypto', scan_run:'Scan starten um Ergebnisse zu sehen',
-    scan_ai_btn:'🤖 KI Ergebnisse analysieren',
-    mkt_open:'🟢 Markt Geöffnet', mkt_closed:'🔴 Markt Geschlossen', mkt_info:'NYSE · NASDAQ',
-    mkt_opens:'Öffnet 9:30 Uhr ET',
-    live_data:'LIVE-DATEN', last_updated:'Live-Daten — KI-gestützte Analyse. Zuletzt aktualisiert:',
-  },
-  pt: {
-    nav_overview:'Visão Geral', nav_markets:'Mercados', nav_intelligence:'Análise IA',
-    nav_dashboard:'Painel', nav_watchlist:'Lista de Acompanhamento', nav_positions:'Sinais e Posições',
-    nav_stocks:'Ações EUA', nav_earnings:'Resultados', nav_bonds:'Títulos e Taxas',
-    nav_commodities:'Commodities', nav_forex:'Câmbio', nav_crypto:'Criptomoedas',
-    nav_crisis:'Detector de Crise', nav_company:'Análise de Empresa', nav_macro:'Macroeconomia',
-    nav_liquidity:'Mapa de Liquidez', nav_heatmap:'Mapa de Calor', nav_calendar:'Calendário Econômico',
-    nav_news:'Notícias', nav_scanner:'Scanner de Mercado',
-    btn_export:'📤 Exportar', btn_ai:'🤖 Analisar IA', btn_settings:'⚙️ Configurações', btn_refresh:'⟳ Atualizar',
-    pg_dashboard:'Painel de Inteligência de Mercado', pg_watchlist:'⭐ Lista de Acompanhamento',
-    pg_positions:'🎯 Sinais de Trading IA', pg_stocks:'📈 Ações EUA',
-    pg_earnings:'💰 Resultados e Receitas', pg_bonds:'🏛️ Títulos e Taxas',
-    pg_commodities:'🛢️ Commodities', pg_forex:'💱 Câmbio', pg_crypto:'₿ Criptomoedas',
-    pg_macro:'🌐 Macroeconomia', pg_liquidity:'💧 Mapa de Liquidez',
-    pg_heatmap:'🔥 Mapa de Calor', pg_calendar:'📅 Calendário Econômico',
-    pg_news:'📰 Notícias', pg_crisis:'🚨 Detector de Crise',
-    pg_company:'🏢 Análise de Empresa', pg_scanner:'🔍 Scanner de Mercado',
-    scan_asset:'Tipo de Ativo', scan_signal:'Sinal', scan_minchg:'% Var. Mín', scan_maxchg:'% Var. Máx',
-    scan_dir:'Direção', scan_btn:'🔍 Escanear', scan_all_assets:'Todos os Ativos',
-    scan_stocks:'Ações', scan_crypto:'Cripto', scan_forex:'Câmbio', scan_commodities:'Commodities',
-    scan_all_signals:'Todos os Sinais', scan_long:'Apenas LONG', scan_short:'Apenas SHORT',
-    scan_neutral:'Neutro', scan_watch:'Monitorar', scan_both_dir:'Alta e Baixa',
-    scan_gainers_only:'Apenas Altas ▲', scan_losers_only:'Apenas Baixas ▼', scan_presets:'Predefinições:',
-    scan_top_gainers:'🚀 Maiores Altas', scan_top_losers:'📉 Maiores Baixas',
-    scan_long_signals:'📈 Sinais LONG IA', scan_short_signals:'📉 Sinais SHORT IA',
-    scan_momentum:'⚡ Momentum (+2%+)', scan_oversold:'🔄 Sobrevendido (-2%-)',
-    scan_crypto_only:'₿ Apenas Cripto', scan_run:'Execute uma varredura para ver resultados',
-    scan_ai_btn:'🤖 IA Analisar Resultados',
-    mkt_open:'🟢 Mercado Aberto', mkt_closed:'🔴 Mercado Fechado', mkt_info:'NYSE · NASDAQ',
-    mkt_opens:'Abre 9:30 AM ET',
-    live_data:'DADOS AO VIVO', last_updated:'Dados ao vivo — análise impulsionada por IA. Última atualização:',
-  },
-  ar: {
+  ar_ae: {
     nav_overview:'نظرة عامة', nav_markets:'الأسواق', nav_intelligence:'تحليل الذكاء الاصطناعي',
     nav_dashboard:'لوحة التحكم', nav_watchlist:'قائمة المراقبة', nav_positions:'الإشارات والمراكز',
-    nav_stocks:'أسهم أمريكية', nav_earnings:'الأرباح', nav_bonds:'السندات والفائدة',
-    nav_commodities:'السلع', nav_forex:'العملات', nav_crypto:'العملات الرقمية',
+    nav_stocks:'الأسهم الأمريكية', nav_earnings:'الأرباح', nav_bonds:'السندات والفائدة',
+    nav_commodities:'السلع', nav_forex:'العملات الأجنبية', nav_crypto:'العملات الرقمية',
     nav_crisis:'كاشف الأزمات', nav_company:'تحليل الشركة', nav_macro:'الاقتصاد الكلي',
     nav_liquidity:'خريطة السيولة', nav_heatmap:'خريطة الحرارة', nav_calendar:'التقويم الاقتصادي',
     nav_news:'الأخبار', nav_scanner:'ماسح السوق',
     btn_export:'📤 تصدير', btn_ai:'🤖 تحليل ذكي', btn_settings:'⚙️ الإعدادات', btn_refresh:'⟳ تحديث',
     pg_dashboard:'لوحة ذكاء السوق', pg_watchlist:'⭐ قائمة المراقبة',
-    pg_positions:'🎯 إشارات تداول الذكاء الاصطناعي', pg_stocks:'📈 أسهم أمريكية',
+    pg_positions:'🎯 إشارات تداول AI', pg_stocks:'📈 الأسهم الأمريكية',
     pg_earnings:'💰 الأرباح والإيرادات', pg_bonds:'🏛️ السندات والفائدة',
-    pg_commodities:'🛢️ السلع', pg_forex:'💱 العملات', pg_crypto:'₿ العملات الرقمية',
+    pg_commodities:'🛢️ السلع', pg_forex:'💱 العملات الأجنبية', pg_crypto:'₿ العملات الرقمية',
     pg_macro:'🌐 الاقتصاد الكلي', pg_liquidity:'💧 خريطة السيولة',
     pg_heatmap:'🔥 خريطة الحرارة', pg_calendar:'📅 التقويم الاقتصادي',
     pg_news:'📰 الأخبار', pg_crisis:'🚨 كاشف الأزمات',
     pg_company:'🏢 تحليل الشركة', pg_scanner:'🔍 ماسح السوق',
-    scan_asset:'نوع الأصل', scan_signal:'الإشارة', scan_minchg:'% التغيير الأدنى', scan_maxchg:'% التغيير الأقصى',
+    scan_asset:'نوع الأصل', scan_signal:'الإشارة', scan_minchg:'% الحد الأدنى للتغيير', scan_maxchg:'% الحد الأقصى للتغيير',
     scan_dir:'الاتجاه', scan_btn:'🔍 مسح', scan_all_assets:'جميع الأصول',
     scan_stocks:'الأسهم', scan_crypto:'الرقمية', scan_forex:'العملات', scan_commodities:'السلع',
     scan_all_signals:'جميع الإشارات', scan_long:'شراء فقط', scan_short:'بيع فقط',
     scan_neutral:'محايد', scan_watch:'مراقبة', scan_both_dir:'صعود وهبوط',
     scan_gainers_only:'الصاعدة فقط ▲', scan_losers_only:'الهابطة فقط ▼', scan_presets:'إعدادات مسبقة:',
     scan_top_gainers:'🚀 أكبر الصاعدين', scan_top_losers:'📉 أكبر الهابطين',
-    scan_long_signals:'📈 إشارات شراء ذكية', scan_short_signals:'📉 إشارات بيع ذكية',
+    scan_long_signals:'📈 إشارات شراء AI', scan_short_signals:'📉 إشارات بيع AI',
     scan_momentum:'⚡ زخم (+2%+)', scan_oversold:'🔄 بيع مفرط (-2%-)',
     scan_crypto_only:'₿ العملات الرقمية فقط', scan_run:'قم بإجراء مسح لرؤية النتائج',
+    scan_ai_btn:'🤖 تحليل النتائج بالذكاء الاصطناعي',
+    mkt_open:'🟢 السوق مفتوح', mkt_closed:'🔴 السوق مغلق', mkt_info:'NYSE · NASDAQ',
+    mkt_opens:'يفتح 9:30 صباحاً ET',
+    live_data:'بيانات مباشرة', last_updated:'بيانات مباشرة — مدعومة بالذكاء الاصطناعي. آخر تحديث:',
+  },
+  ar_sa: {
+    nav_overview:'نظرة عامة', nav_markets:'الأسواق', nav_intelligence:'تحليل الذكاء الاصطناعي',
+    nav_dashboard:'لوحة التحكم', nav_watchlist:'قائمة المتابعة', nav_positions:'الإشارات والمراكز',
+    nav_stocks:'الأسهم الأمريكية', nav_earnings:'الأرباح', nav_bonds:'السندات والفائدة',
+    nav_commodities:'السلع', nav_forex:'الفوركس', nav_crypto:'العملات المشفرة',
+    nav_crisis:'كاشف الأزمات', nav_company:'تحليل الشركة', nav_macro:'الاقتصاد الكلي',
+    nav_liquidity:'خريطة السيولة', nav_heatmap:'الخريطة الحرارية', nav_calendar:'التقويم الاقتصادي',
+    nav_news:'الأخبار', nav_scanner:'ماسح الأسواق',
+    btn_export:'📤 تصدير', btn_ai:'🤖 تحليل AI', btn_settings:'⚙️ الإعدادات', btn_refresh:'⟳ تحديث',
+    pg_dashboard:'لوحة ذكاء السوق', pg_watchlist:'⭐ قائمة المتابعة',
+    pg_positions:'🎯 إشارات تداول AI', pg_stocks:'📈 الأسهم الأمريكية',
+    pg_earnings:'💰 الأرباح والإيرادات', pg_bonds:'🏛️ السندات والفائدة',
+    pg_commodities:'🛢️ السلع', pg_forex:'💱 الفوركس', pg_crypto:'₿ العملات المشفرة',
+    pg_macro:'🌐 الاقتصاد الكلي', pg_liquidity:'💧 خريطة السيولة',
+    pg_heatmap:'🔥 الخريطة الحرارية', pg_calendar:'📅 التقويم الاقتصادي',
+    pg_news:'📰 الأخبار', pg_crisis:'🚨 كاشف الأزمات',
+    pg_company:'🏢 تحليل الشركة', pg_scanner:'🔍 ماسح الأسواق',
+    scan_asset:'نوع الأصل', scan_signal:'الإشارة', scan_minchg:'% الحد الأدنى', scan_maxchg:'% الحد الأقصى',
+    scan_dir:'الاتجاه', scan_btn:'🔍 مسح', scan_all_assets:'جميع الأصول',
+    scan_stocks:'الأسهم', scan_crypto:'المشفرة', scan_forex:'الفوركس', scan_commodities:'السلع',
+    scan_all_signals:'جميع الإشارات', scan_long:'شراء فقط', scan_short:'بيع فقط',
+    scan_neutral:'محايد', scan_watch:'متابعة', scan_both_dir:'صعود وهبوط',
+    scan_gainers_only:'الصاعدة فقط ▲', scan_losers_only:'الهابطة فقط ▼', scan_presets:'إعدادات مسبقة:',
+    scan_top_gainers:'🚀 أعلى الصاعدين', scan_top_losers:'📉 أعلى الهابطين',
+    scan_long_signals:'📈 إشارات شراء AI', scan_short_signals:'📉 إشارات بيع AI',
+    scan_momentum:'⚡ زخم (+2%+)', scan_oversold:'🔄 بيع مفرط (-2%-)',
+    scan_crypto_only:'₿ المشفرة فقط', scan_run:'شغّل المسح لرؤية النتائج',
+    scan_ai_btn:'🤖 تحليل النتائج بالذكاء الاصطناعي',
+    mkt_open:'🟢 السوق مفتوح', mkt_closed:'🔴 السوق مغلق', mkt_info:'NYSE · NASDAQ',
+    mkt_opens:'يفتح 9:30 صباحاً ET',
+    live_data:'بيانات مباشرة', last_updated:'بيانات مباشرة — مدعومة بالذكاء الاصطناعي. آخر تحديث:',
+  },
+  ar_kw: {
+    nav_overview:'نظرة عامة', nav_markets:'الأسواق', nav_intelligence:'تحليل ذكي',
+    nav_dashboard:'لوحة البيانات', nav_watchlist:'قائمة المراقبة', nav_positions:'الإشارات والمراكز',
+    nav_stocks:'أسهم أمريكية', nav_earnings:'الأرباح', nav_bonds:'السندات والفوائد',
+    nav_commodities:'السلع', nav_forex:'الفوركس', nav_crypto:'العملات الرقمية',
+    nav_crisis:'كاشف الأزمات', nav_company:'تحليل الشركة', nav_macro:'الاقتصاد الكلي',
+    nav_liquidity:'خريطة السيولة', nav_heatmap:'الخريطة الحرارية', nav_calendar:'الروزنامة الاقتصادية',
+    nav_news:'الأخبار', nav_scanner:'ماسح الأسواق',
+    btn_export:'📤 تصدير', btn_ai:'🤖 تحليل ذكي', btn_settings:'⚙️ الإعدادات', btn_refresh:'⟳ تحديث',
+    pg_dashboard:'لوحة ذكاء السوق', pg_watchlist:'⭐ قائمة المراقبة',
+    pg_positions:'🎯 إشارات تداول ذكي', pg_stocks:'📈 أسهم أمريكية',
+    pg_earnings:'💰 الأرباح والعوائد', pg_bonds:'🏛️ السندات والفوائد',
+    pg_commodities:'🛢️ السلع', pg_forex:'💱 الفوركس', pg_crypto:'₿ العملات الرقمية',
+    pg_macro:'🌐 الاقتصاد الكلي', pg_liquidity:'💧 خريطة السيولة',
+    pg_heatmap:'🔥 الخريطة الحرارية', pg_calendar:'📅 الروزنامة الاقتصادية',
+    pg_news:'📰 الأخبار', pg_crisis:'🚨 كاشف الأزمات',
+    pg_company:'🏢 تحليل الشركة', pg_scanner:'🔍 ماسح الأسواق',
+    scan_asset:'نوع الأصل', scan_signal:'الإشارة', scan_minchg:'% أدنى تغيير', scan_maxchg:'% أعلى تغيير',
+    scan_dir:'الاتجاه', scan_btn:'🔍 مسح', scan_all_assets:'جميع الأصول',
+    scan_stocks:'الأسهم', scan_crypto:'الرقمية', scan_forex:'الفوركس', scan_commodities:'السلع',
+    scan_all_signals:'جميع الإشارات', scan_long:'شراء فقط', scan_short:'بيع فقط',
+    scan_neutral:'محايد', scan_watch:'مراقبة', scan_both_dir:'صعود وهبوط',
+    scan_gainers_only:'الصاعدة فقط ▲', scan_losers_only:'الهابطة فقط ▼', scan_presets:'إعدادات جاهزة:',
+    scan_top_gainers:'🚀 أعلى الصاعدين', scan_top_losers:'📉 أعلى الهابطين',
+    scan_long_signals:'📈 إشارات شراء AI', scan_short_signals:'📉 إشارات بيع AI',
+    scan_momentum:'⚡ زخم (+2%+)', scan_oversold:'🔄 بيع زائد (-2%-)',
+    scan_crypto_only:'₿ الرقمية فقط', scan_run:'شغّل المسح لعرض النتائج',
+    scan_ai_btn:'🤖 تحليل النتائج بالذكاء الاصطناعي',
+    mkt_open:'🟢 السوق مفتوح', mkt_closed:'🔴 السوق مغلق', mkt_info:'NYSE · NASDAQ',
+    mkt_opens:'يفتح 9:30 صباحاً ET',
+    live_data:'بيانات مباشرة', last_updated:'بيانات مباشرة — مدعومة بالذكاء الاصطناعي. آخر تحديث:',
+  },
+  ar_qa: {
+    nav_overview:'نظرة عامة', nav_markets:'الأسواق', nav_intelligence:'تحليل AI',
+    nav_dashboard:'لوحة التحكم', nav_watchlist:'قائمة الاهتمام', nav_positions:'الإشارات والمراكز',
+    nav_stocks:'أسهم أمريكية', nav_earnings:'الأرباح', nav_bonds:'السندات والفوائد',
+    nav_commodities:'السلع', nav_forex:'العملات الأجنبية', nav_crypto:'العملات المشفرة',
+    nav_crisis:'كاشف الأزمات', nav_company:'تحليل الشركة', nav_macro:'الاقتصاد الكلي',
+    nav_liquidity:'خريطة السيولة', nav_heatmap:'خريطة الحرارة', nav_calendar:'التقويم الاقتصادي',
+    nav_news:'الأخبار', nav_scanner:'ماسح الأسواق',
+    btn_export:'📤 تصدير', btn_ai:'🤖 تحليل AI', btn_settings:'⚙️ الإعدادات', btn_refresh:'⟳ تحديث',
+    pg_dashboard:'لوحة ذكاء السوق', pg_watchlist:'⭐ قائمة الاهتمام',
+    pg_positions:'🎯 إشارات تداول AI', pg_stocks:'📈 أسهم أمريكية',
+    pg_earnings:'💰 الأرباح والإيرادات', pg_bonds:'🏛️ السندات والفوائد',
+    pg_commodities:'🛢️ السلع', pg_forex:'💱 العملات الأجنبية', pg_crypto:'₿ المشفرة',
+    pg_macro:'🌐 الاقتصاد الكلي', pg_liquidity:'💧 خريطة السيولة',
+    pg_heatmap:'🔥 خريطة الحرارة', pg_calendar:'📅 التقويم الاقتصادي',
+    pg_news:'📰 الأخبار', pg_crisis:'🚨 كاشف الأزمات',
+    pg_company:'🏢 تحليل الشركة', pg_scanner:'🔍 ماسح الأسواق',
+    scan_asset:'نوع الأصل', scan_signal:'الإشارة', scan_minchg:'% الحد الأدنى', scan_maxchg:'% الحد الأقصى',
+    scan_dir:'الاتجاه', scan_btn:'🔍 مسح', scan_all_assets:'جميع الأصول',
+    scan_stocks:'الأسهم', scan_crypto:'المشفرة', scan_forex:'العملات', scan_commodities:'السلع',
+    scan_all_signals:'جميع الإشارات', scan_long:'شراء فقط', scan_short:'بيع فقط',
+    scan_neutral:'محايد', scan_watch:'متابعة', scan_both_dir:'صعود وهبوط',
+    scan_gainers_only:'الصاعدة فقط ▲', scan_losers_only:'الهابطة فقط ▼', scan_presets:'إعدادات مسبقة:',
+    scan_top_gainers:'🚀 أعلى الصاعدين', scan_top_losers:'📉 أعلى الهابطين',
+    scan_long_signals:'📈 إشارات شراء AI', scan_short_signals:'📉 إشارات بيع AI',
+    scan_momentum:'⚡ زخم (+2%+)', scan_oversold:'🔄 بيع مفرط (-2%-)',
+    scan_crypto_only:'₿ المشفرة فقط', scan_run:'قم بالمسح لعرض النتائج',
     scan_ai_btn:'🤖 تحليل النتائج بالذكاء الاصطناعي',
     mkt_open:'🟢 السوق مفتوح', mkt_closed:'🔴 السوق مغلق', mkt_info:'NYSE · NASDAQ',
     mkt_opens:'يفتح 9:30 صباحاً ET',
@@ -5358,9 +5366,10 @@ function applyLanguage(lang){
   // Update html lang attribute for proper font rendering
   document.documentElement.lang = lang.replace('_','-');
 
-  // RTL support for Arabic
-  document.documentElement.dir = (lang === 'ar') ? 'rtl' : 'ltr';
-  document.body.style.direction = (lang === 'ar') ? 'rtl' : 'ltr';
+  // RTL support for Arabic (including Gulf variants)
+  const isRTL = ['ar','ar_ae','ar_sa','ar_kw','ar_qa'].includes(lang);
+  document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
+  document.body.style.direction = isRTL ? 'rtl' : 'ltr';
 
   // Update body font to prefer Noto Sans variants for non-Latin scripts
   const notoScriptFonts = {
@@ -5371,6 +5380,10 @@ function applyLanguage(lang){
     ja:    "'Noto Sans JP', Arial, sans-serif",
     ko:    "'Noto Sans KR', Arial, sans-serif",
     ar:    "'Noto Sans Arabic', Arial, sans-serif",
+    ar_ae: "'Noto Sans Arabic', Arial, sans-serif",
+    ar_sa: "'Noto Sans Arabic', Arial, sans-serif",
+    ar_kw: "'Noto Sans Arabic', Arial, sans-serif",
+    ar_qa: "'Noto Sans Arabic', Arial, sans-serif",
   };
   document.body.style.fontFamily = notoScriptFonts[lang] || "Arial, 'Noto Sans', sans-serif";
 
@@ -5401,7 +5414,25 @@ function applyLanguage(lang){
       const badge = el.querySelector('.nav-badge');
       el.textContent = '';
       if(icon) el.appendChild(icon);
-      el.appendChild(document.createTextNode(T[navMap[match[1]]]));
+      // Wrap labels in a flex column container
+      const labelWrap = document.createElement('span');
+      labelWrap.className = 'nav-label-wrap';
+      // Primary label in selected language
+      const primary = document.createElement('span');
+      primary.className = 'nav-label-primary';
+      primary.textContent = T[navMap[match[1]]];
+      labelWrap.appendChild(primary);
+      // Dual language: show English subtitle when non-English
+      if(lang !== 'en'){
+        const enText = TRANSLATIONS.en[navMap[match[1]]];
+        if(enText && enText !== T[navMap[match[1]]]){
+          const sub = document.createElement('span');
+          sub.className = 'nav-label-en';
+          sub.textContent = enText;
+          labelWrap.appendChild(sub);
+        }
+      }
+      el.appendChild(labelWrap);
       if(badge) el.appendChild(badge);
     }
   });
