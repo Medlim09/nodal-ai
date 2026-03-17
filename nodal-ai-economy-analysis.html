@@ -1242,101 +1242,10 @@ body::before{
   body { padding-bottom: 0; }
 }
 
-/* ═══════════════════════════════════════════════════
-   DEMO LOGIN GATE
-═══════════════════════════════════════════════════ */
-#demoLoginGate {
-  position:fixed;inset:0;z-index:99999;
-  background:#05070f;
-  display:flex;align-items:center;justify-content:center;
-  font-family:Arial,'Noto Sans',sans-serif;
-}
-#demoLoginBox {
-  background:#0d0e14;
-  border:1px solid rgba(79,142,247,.25);
-  border-radius:18px;
-  padding:44px 40px 38px;
-  width:360px;max-width:calc(100vw - 32px);
-  box-shadow:0 24px 80px rgba(0,0,0,.7), 0 0 0 1px rgba(79,142,247,.1);
-  text-align:center;
-}
-#demoLoginBox .dlg-logo {
-  font-size:36px;font-weight:800;letter-spacing:-1px;
-  background:linear-gradient(135deg,#4f8ef7,#a78bfa);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  margin-bottom:4px;
-}
-#demoLoginBox .dlg-subtitle {
-  font-size:11px;color:#556;letter-spacing:.08em;text-transform:uppercase;
-  margin-bottom:28px;
-}
-#demoLoginBox .dlg-badge {
-  display:inline-block;background:rgba(79,142,247,.12);border:1px solid rgba(79,142,247,.3);
-  color:#4f8ef7;font-size:10px;font-weight:700;letter-spacing:.06em;
-  padding:3px 10px;border-radius:20px;margin-bottom:24px;
-}
-#demoLoginBox label {
-  display:block;text-align:left;font-size:10.5px;font-weight:600;
-  color:#7788aa;letter-spacing:.04em;text-transform:uppercase;margin-bottom:5px;
-}
-#demoLoginBox input {
-  width:100%;box-sizing:border-box;
-  background:#131620;border:1px solid rgba(255,255,255,.1);
-  color:#e8eaf0;border-radius:9px;padding:11px 14px;font-size:14px;
-  outline:none;margin-bottom:14px;transition:border-color .2s;
-}
-#demoLoginBox input:focus { border-color:rgba(79,142,247,.6); }
-#demoLoginBox .dlg-btn {
-  width:100%;padding:13px;border:none;border-radius:10px;
-  background:linear-gradient(135deg,#4f8ef7,#6c7cff);
-  color:#fff;font-size:14px;font-weight:700;letter-spacing:.02em;
-  cursor:pointer;transition:opacity .2s;margin-top:4px;
-}
-#demoLoginBox .dlg-btn:hover { opacity:.88; }
-#demoLoginBox .dlg-err {
-  color:#e05070;font-size:12px;margin-top:10px;min-height:18px;
-}
-#demoLoginBox .dlg-timer {
-  font-size:10px;color:#556;margin-top:16px;
-}
-#demoExpiredBox {
-  background:#0d0e14;border:1px solid rgba(224,80,112,.25);
-  border-radius:18px;padding:44px 40px;width:360px;max-width:calc(100vw - 32px);
-  box-shadow:0 24px 80px rgba(0,0,0,.7);text-align:center;
-}
-#demoExpiredBox .dex-icon { font-size:44px;margin-bottom:12px; }
-#demoExpiredBox .dex-title { font-size:20px;font-weight:800;color:#e8eaf0;margin-bottom:8px; }
-#demoExpiredBox .dex-msg { font-size:13px;color:#7788aa;line-height:1.6; }
 </style>
 </head>
 <body>
 
-<!-- ══ DEMO LOGIN GATE ═══════════════════════════════════════ -->
-<div id="demoLoginGate">
-  <!-- Login form (shown by default) -->
-  <div id="demoLoginBox">
-    <div class="dlg-logo">NODAL AI</div>
-    <div class="dlg-subtitle">Economy Analysis Platform</div>
-    <div class="dlg-badge">🔒 Demo Access</div>
-    <div>
-      <label>Username</label>
-      <input type="text" id="dlgUser" placeholder="Enter username" autocomplete="username" />
-      <label>Password</label>
-      <input type="password" id="dlgPass" placeholder="Enter password" autocomplete="current-password"
-        onkeydown="if(event.key==='Enter')demoLogin()" />
-      <button class="dlg-btn" onclick="demoLogin()">Sign In</button>
-      <div class="dlg-err" id="dlgErr"></div>
-      <div class="dlg-timer" id="dlgTimer"></div>
-    </div>
-  </div>
-  <!-- Expired state (hidden by default) -->
-  <div id="demoExpiredBox" style="display:none">
-    <div class="dex-icon">⏳</div>
-    <div class="dex-title">Demo Access Expired</div>
-    <div class="dex-msg">Your 3-day demo period has ended.<br>Please contact us to arrange full access.</div>
-  </div>
-</div>
-<!-- ══ END DEMO LOGIN GATE ══════════════════════════════════ -->
 
 <!-- ════════════ LOGIN / SUBSCRIPTION GATE ════════════ -->
 <div id="loginGate">
@@ -2419,60 +2328,6 @@ body::before{
 </div><!-- #main -->
 
 <script>
-/* ══════════════════════════════════════════════════
-   DEMO LOGIN GATE
-══════════════════════════════════════════════════ */
-(function(){
-  const DEMO_USER = 'Nodal';
-  const DEMO_PASS = '841107Kekelim';
-  const DEMO_DAYS = 3;
-  const KEY_TS    = 'nodalDemoLoginTs';
-  const KEY_OK    = 'nodalDemoOk';
-
-  function hideDemoGate(){ const g=document.getElementById('demoLoginGate'); if(g) g.style.display='none'; }
-  function showExpired(){
-    const lb=document.getElementById('demoLoginBox'); if(lb) lb.style.display='none';
-    const eb=document.getElementById('demoExpiredBox'); if(eb) eb.style.display='block';
-  }
-
-  // Check existing session
-  const ts = parseInt(localStorage.getItem(KEY_TS)||'0',10);
-  const ok = localStorage.getItem(KEY_OK)==='1';
-  if(ok && ts){
-    const elapsed = Date.now() - ts;
-    if(elapsed < DEMO_DAYS * 86400000){
-      hideDemoGate();
-      // Show remaining time in settings (optional)
-      const remaining = Math.ceil((DEMO_DAYS * 86400000 - elapsed) / 86400000);
-      window._demoRemainingDays = remaining;
-    } else {
-      showExpired();
-    }
-  }
-
-  // Global login function called by button
-  window.demoLogin = function(){
-    const u = (document.getElementById('dlgUser')?.value||'').trim();
-    const p = (document.getElementById('dlgPass')?.value||'').trim();
-    const err = document.getElementById('dlgErr');
-    if(u===DEMO_USER && p===DEMO_PASS){
-      localStorage.setItem(KEY_OK,'1');
-      localStorage.setItem(KEY_TS, Date.now().toString());
-      window._demoRemainingDays = DEMO_DAYS;
-      hideDemoGate();
-    } else {
-      if(err){ err.textContent='Invalid username or password.'; }
-      const inp = document.getElementById('dlgPass');
-      if(inp){ inp.value=''; inp.focus(); }
-    }
-  };
-
-  // Show days remaining hint in timer element
-  document.addEventListener('DOMContentLoaded',()=>{
-    const tm = document.getElementById('dlgTimer');
-    if(tm){ tm.textContent='Demo access: 3 days from first login.'; }
-  });
-})();
 
 /* ══════════════════════════════════════════════════
    FALLBACK MARKET DATA (approx. Q1 2026 — replaced by live fetch)
@@ -7197,6 +7052,12 @@ function lgDemoLogin(tier) {
 function lgSetSession(email, tier) {
   localStorage.setItem('nodalMemberEmail', email);
   localStorage.setItem('nodalMemberTier', tier);
+  // For demo tiers, stamp first-login time for 3-day expiry
+  if (email.endsWith('@nodalai.com')) {
+    if (!localStorage.getItem('nodalDemoTs')) {
+      localStorage.setItem('nodalDemoTs', Date.now().toString());
+    }
+  }
   document.getElementById('loginGate').classList.add('hidden');
   applyTier(tier);
   // Update header badge
@@ -7219,6 +7080,7 @@ function lgSetSession(email, tier) {
 function lgLogout() {
   localStorage.removeItem('nodalMemberEmail');
   localStorage.removeItem('nodalMemberTier');
+  localStorage.removeItem('nodalDemoTs');
   location.reload();
 }
 
@@ -7286,7 +7148,27 @@ window.addEventListener('DOMContentLoaded',()=>{
   // ── Check existing session ──
   const savedEmail = localStorage.getItem('nodalMemberEmail');
   const savedTier  = localStorage.getItem('nodalMemberTier');
-  if (savedEmail && savedTier) {
+  const demoTs     = parseInt(localStorage.getItem('nodalDemoTs') || '0', 10);
+  const isDemo     = savedEmail && savedEmail.endsWith('@nodalai.com');
+  const demoExpired = isDemo && demoTs && (Date.now() - demoTs) >= 3 * 86400000;
+
+  if (demoExpired) {
+    // Demo trial ended — clear session and show expired notice in login gate
+    localStorage.removeItem('nodalMemberEmail');
+    localStorage.removeItem('nodalMemberTier');
+    localStorage.removeItem('nodalDemoTs');
+    // Swap login card content to expired message
+    const card = document.querySelector('#loginGate .lg-card');
+    if (card) card.innerHTML = `
+      <div style="text-align:center;padding:32px 16px;">
+        <div style="font-size:42px;margin-bottom:12px;">⏳</div>
+        <div style="font-size:18px;font-weight:800;margin-bottom:8px;">Demo Trial Expired</div>
+        <div style="font-size:12px;color:var(--muted2);line-height:1.7;margin-bottom:20px;">
+          Your 3-day free trial has ended.<br>Subscribe to continue accessing NODAL AI.
+        </div>
+        <button class="lg-btn lg-btn-primary" onclick="location.reload()" style="font-size:12px;">Back to Login →</button>
+      </div>`;
+  } else if (savedEmail && savedTier) {
     document.getElementById('loginGate').classList.add('hidden');
     applyTier(savedTier);
     const badge = document.getElementById('hdrTierBadge');
