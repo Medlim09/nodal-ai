@@ -1241,9 +1241,102 @@ body::before{
   /* Bottom nav safe area */
   body { padding-bottom: 0; }
 }
+
+/* ═══════════════════════════════════════════════════
+   DEMO LOGIN GATE
+═══════════════════════════════════════════════════ */
+#demoLoginGate {
+  position:fixed;inset:0;z-index:99999;
+  background:#05070f;
+  display:flex;align-items:center;justify-content:center;
+  font-family:Arial,'Noto Sans',sans-serif;
+}
+#demoLoginBox {
+  background:#0d0e14;
+  border:1px solid rgba(79,142,247,.25);
+  border-radius:18px;
+  padding:44px 40px 38px;
+  width:360px;max-width:calc(100vw - 32px);
+  box-shadow:0 24px 80px rgba(0,0,0,.7), 0 0 0 1px rgba(79,142,247,.1);
+  text-align:center;
+}
+#demoLoginBox .dlg-logo {
+  font-size:36px;font-weight:800;letter-spacing:-1px;
+  background:linear-gradient(135deg,#4f8ef7,#a78bfa);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  margin-bottom:4px;
+}
+#demoLoginBox .dlg-subtitle {
+  font-size:11px;color:#556;letter-spacing:.08em;text-transform:uppercase;
+  margin-bottom:28px;
+}
+#demoLoginBox .dlg-badge {
+  display:inline-block;background:rgba(79,142,247,.12);border:1px solid rgba(79,142,247,.3);
+  color:#4f8ef7;font-size:10px;font-weight:700;letter-spacing:.06em;
+  padding:3px 10px;border-radius:20px;margin-bottom:24px;
+}
+#demoLoginBox label {
+  display:block;text-align:left;font-size:10.5px;font-weight:600;
+  color:#7788aa;letter-spacing:.04em;text-transform:uppercase;margin-bottom:5px;
+}
+#demoLoginBox input {
+  width:100%;box-sizing:border-box;
+  background:#131620;border:1px solid rgba(255,255,255,.1);
+  color:#e8eaf0;border-radius:9px;padding:11px 14px;font-size:14px;
+  outline:none;margin-bottom:14px;transition:border-color .2s;
+}
+#demoLoginBox input:focus { border-color:rgba(79,142,247,.6); }
+#demoLoginBox .dlg-btn {
+  width:100%;padding:13px;border:none;border-radius:10px;
+  background:linear-gradient(135deg,#4f8ef7,#6c7cff);
+  color:#fff;font-size:14px;font-weight:700;letter-spacing:.02em;
+  cursor:pointer;transition:opacity .2s;margin-top:4px;
+}
+#demoLoginBox .dlg-btn:hover { opacity:.88; }
+#demoLoginBox .dlg-err {
+  color:#e05070;font-size:12px;margin-top:10px;min-height:18px;
+}
+#demoLoginBox .dlg-timer {
+  font-size:10px;color:#556;margin-top:16px;
+}
+#demoExpiredBox {
+  background:#0d0e14;border:1px solid rgba(224,80,112,.25);
+  border-radius:18px;padding:44px 40px;width:360px;max-width:calc(100vw - 32px);
+  box-shadow:0 24px 80px rgba(0,0,0,.7);text-align:center;
+}
+#demoExpiredBox .dex-icon { font-size:44px;margin-bottom:12px; }
+#demoExpiredBox .dex-title { font-size:20px;font-weight:800;color:#e8eaf0;margin-bottom:8px; }
+#demoExpiredBox .dex-msg { font-size:13px;color:#7788aa;line-height:1.6; }
 </style>
 </head>
 <body>
+
+<!-- ══ DEMO LOGIN GATE ═══════════════════════════════════════ -->
+<div id="demoLoginGate">
+  <!-- Login form (shown by default) -->
+  <div id="demoLoginBox">
+    <div class="dlg-logo">NODAL AI</div>
+    <div class="dlg-subtitle">Economy Analysis Platform</div>
+    <div class="dlg-badge">🔒 Demo Access</div>
+    <div>
+      <label>Username</label>
+      <input type="text" id="dlgUser" placeholder="Enter username" autocomplete="username" />
+      <label>Password</label>
+      <input type="password" id="dlgPass" placeholder="Enter password" autocomplete="current-password"
+        onkeydown="if(event.key==='Enter')demoLogin()" />
+      <button class="dlg-btn" onclick="demoLogin()">Sign In</button>
+      <div class="dlg-err" id="dlgErr"></div>
+      <div class="dlg-timer" id="dlgTimer"></div>
+    </div>
+  </div>
+  <!-- Expired state (hidden by default) -->
+  <div id="demoExpiredBox" style="display:none">
+    <div class="dex-icon">⏳</div>
+    <div class="dex-title">Demo Access Expired</div>
+    <div class="dex-msg">Your 3-day demo period has ended.<br>Please contact us to arrange full access.</div>
+  </div>
+</div>
+<!-- ══ END DEMO LOGIN GATE ══════════════════════════════════ -->
 
 <!-- ════════════ LOGIN / SUBSCRIPTION GATE ════════════ -->
 <div id="loginGate">
@@ -2326,6 +2419,61 @@ body::before{
 </div><!-- #main -->
 
 <script>
+/* ══════════════════════════════════════════════════
+   DEMO LOGIN GATE
+══════════════════════════════════════════════════ */
+(function(){
+  const DEMO_USER = 'Nodal';
+  const DEMO_PASS = '841107Kekelim';
+  const DEMO_DAYS = 3;
+  const KEY_TS    = 'nodalDemoLoginTs';
+  const KEY_OK    = 'nodalDemoOk';
+
+  function hideDemoGate(){ const g=document.getElementById('demoLoginGate'); if(g) g.style.display='none'; }
+  function showExpired(){
+    const lb=document.getElementById('demoLoginBox'); if(lb) lb.style.display='none';
+    const eb=document.getElementById('demoExpiredBox'); if(eb) eb.style.display='block';
+  }
+
+  // Check existing session
+  const ts = parseInt(localStorage.getItem(KEY_TS)||'0',10);
+  const ok = localStorage.getItem(KEY_OK)==='1';
+  if(ok && ts){
+    const elapsed = Date.now() - ts;
+    if(elapsed < DEMO_DAYS * 86400000){
+      hideDemoGate();
+      // Show remaining time in settings (optional)
+      const remaining = Math.ceil((DEMO_DAYS * 86400000 - elapsed) / 86400000);
+      window._demoRemainingDays = remaining;
+    } else {
+      showExpired();
+    }
+  }
+
+  // Global login function called by button
+  window.demoLogin = function(){
+    const u = (document.getElementById('dlgUser')?.value||'').trim();
+    const p = (document.getElementById('dlgPass')?.value||'').trim();
+    const err = document.getElementById('dlgErr');
+    if(u===DEMO_USER && p===DEMO_PASS){
+      localStorage.setItem(KEY_OK,'1');
+      localStorage.setItem(KEY_TS, Date.now().toString());
+      window._demoRemainingDays = DEMO_DAYS;
+      hideDemoGate();
+    } else {
+      if(err){ err.textContent='Invalid username or password.'; }
+      const inp = document.getElementById('dlgPass');
+      if(inp){ inp.value=''; inp.focus(); }
+    }
+  };
+
+  // Show days remaining hint in timer element
+  document.addEventListener('DOMContentLoaded',()=>{
+    const tm = document.getElementById('dlgTimer');
+    if(tm){ tm.textContent='Demo access: 3 days from first login.'; }
+  });
+})();
+
 /* ══════════════════════════════════════════════════
    FALLBACK MARKET DATA (approx. Q1 2026 — replaced by live fetch)
    Live data is loaded via fetchAllLiveData() on page load
@@ -4198,34 +4346,135 @@ function annotateFin(text, lang) {
   return result;
 }
 
+/* ══════════════════════════════════════════════════
+   CRISIS CARD TRANSLATIONS
+   Keys match CRISIS.indicators[].id
+══════════════════════════════════════════════════ */
+const CRISIS_TEXT = {
+  zh_CN:{
+    yield_curve:{name:'收益率曲线倒置',desc:'3个月与10年期美债利差 — 关键衰退预警指标。',signals:['正在从FRED/雅虎财经获取实时收益率数据...','历史命中率：8次衰退中7次由倒置先行','曲线倒置历史上提前12–18个月预示衰退','关注再陡峭化 — 通常预示衰退正式开始'],hist:'2006-2007年：倒置持续18个月，早于全球金融危机。2019年：COVID前短暂倒置。'},
+    credit_stress:{name:'信贷市场压力',desc:'高收益和投资级信用利差反映企业债务市场压力。',signals:['高收益利差 — 持续突破400bps即为危机信号','投资级利差 — 正常范围80–120bps；超150bps偏高','CCC级债券 — 利差超900bps处于困境','银行贷款标准（SLOOS）— 存在收紧趋势'],hist:'2007年：高收益利差约250bps，2008年急剧飙升至1800bps。'},
+    volatility:{name:'市场波动率 (VIX)',desc:'VIX衡量标普500期权30日隐含波动率 — "恐慌指数"。',signals:['正在从雅虎财经获取实时VIX...','VIX低于15 = 自满区 — 历史上常先于调整','VIX高于30 = 市场恐慌；高于50 = 系统性危机','VVIX偏高 — 若宏观冲击发生，波动率急升风险'],hist:'VIX低于15先于2020年COVID崩盘。2008年全球金融危机期间VIX曾达89。'},
+    inflation:{name:'通货膨胀压力',desc:'CPI和核心PCE相对美联储2%目标 — 顽固通胀延长高利率周期。',signals:['正在从BLS.gov获取实时CPI...','核心PCE — 正在从FRED获取...','住房通胀分项 — 滞后但持续向上压力','5年期通胀盈亏平衡点 — 市场通胀预期指标'],hist:'1970年代滞胀：CPI峰值14.8%。2022年峰值：9.1%。当前：逐步正常化。'},
+    banking:{name:'银行体系压力',desc:'2023年SVB/CS冲击后银行体系基本稳定。商业房地产仍为关键风险。',signals:['美联储BTFP工具已全面退出 — 紧急支撑移除','商业房地产约1.5万亿美元贷款将于2024–2027年到期','银行准备金超3万亿美元 — 流动性缓冲充足','地区性银行商业房地产敞口：办公楼空置率处历史高位'],hist:'2008年全球金融危机：25家主要银行倒闭。2023年：3家（硅谷银行、签名银行、第一共和国）。'},
+    debt:{name:'主权债务风险',desc:'截至2026年美国联邦债务约36万亿美元。利息支出已成单项最大财政支出。',signals:['美国国家债务：约36万亿美元 — 结构性持续攀升','年度利息支出：约1.1万亿美元 — 已超过国防支出','财政赤字：每年约1.8万亿美元以上 — 结构性问题','惠誉（AA+）及穆迪负面展望 — 美国信用承压'],hist:'日本债务/GDP约260%但主要由国内持有。美国债务是全球储备货币的系统性风险。'},
+    liquidity:{name:'流动性状况',desc:'美联储2024年暂停量化紧缩，资产负债表缩减步伐放缓，美元流动性充裕。',signals:['量化紧缩步伐减缓 — 准备金消耗明显放缓','回购市场稳定 — 隔夜利率接近联邦基金目标利率','美元互换额度激活 — 国际美元需求得到满足','货币市场基金约7万亿美元 — 创历史新高（大量干粉待投）'],hist:'2019年回购危机：隔夜利率飙升至10%。当前准备金仍充裕。'},
+    housing:{name:'房地产市场压力',desc:'尽管美联储小幅降息，可负担性仍处历史低位，现有住宅销售陷入僵局。',signals:['30年期抵押贷款利率约6.5–7% — 可负担性处数十年低位','房屋可负担性指数接近40年低点','现有住宅销售低迷 — "锁定效应"来自2020-21年低利率','房价依然偏高 — 目前尚无大范围价格回调'],hist:'2008年房地产崩盘导致全球金融危机，房价全国性下跌逾30%。'},
+    geopolitical:{name:'地缘政治风险',desc:'多重活跃风险：贸易战、区域冲突、中美科技脱钩。',signals:['中美贸易战升级 — 关税与科技出口管制持续扩大','俄乌冲突持续 — 欧洲能源安全风险','中东紧张局势 — 红海航运中断部分缓解','台海风险上升 — 半导体供应链集中度风险'],hist:'1973年石油禁运引发滞胀。2026年地缘政治风险更为多维复杂。'},
+    private_credit:{name:'私人信贷风险',desc:'约1.7万亿美元私人信贷市场存在流动性与估值风险，监管透明度不足。',signals:['市场规模约1.7万亿美元 — 2015年以来增长5倍，监管不透明','到期墙：约5000亿美元以上私人贷款将于2025–2027年到期','违约率上升 — 高利率侵蚀借款人偿债覆盖比率','80%以上新私人贷款为宽契约贷款 — 贷款人保护极少'],hist:'2008年全球金融危机时私人信贷规模甚小。零利率环境下2015年后的快速增长在高利率时代面临未经检验的压力。'},
+  },
+  zh_TW:{
+    yield_curve:{name:'殖利率曲線倒置',desc:'3個月與10年期美債利差 — 關鍵衰退預警指標。',signals:['正在從FRED/雅虎財經獲取即時殖利率數據...','歷史命中率：8次衰退中7次由倒置先行','曲線倒置歷史上提前12–18個月預示衰退','關注再陡峭化 — 通常預示衰退正式開始'],hist:'2006-2007年：倒置持續18個月，早於全球金融危機。2019年：COVID前短暫倒置。'},
+    credit_stress:{name:'信貸市場壓力',desc:'高收益和投資級信用利差反映企業債務市場壓力。',signals:['高收益利差 — 持續突破400bps即為危機信號','投資級利差 — 正常範圍80–120bps；超150bps偏高','CCC級債券 — 利差超900bps處於困境','銀行放款標準（SLOOS）— 存在收緊趨勢'],hist:'2007年：高收益利差約250bps，2008年急劇飆升至1800bps。'},
+    volatility:{name:'市場波動率 (VIX)',desc:'VIX衡量標普500選擇權30日隱含波動率 — 「恐慌指數」。',signals:['正在從雅虎財經獲取即時VIX...','VIX低於15 = 自滿區 — 歷史上常先於修正','VIX高於30 = 市場恐慌；高於50 = 系統性危機','VVIX偏高 — 若總體衝擊發生，波動率急升風險'],hist:'VIX低於15先於2020年COVID崩盤。2008年全球金融危機期間VIX曾達89。'},
+    inflation:{name:'通貨膨脹壓力',desc:'CPI和核心PCE相對聯準會2%目標 — 頑固通膨延長高利率週期。',signals:['正在從BLS.gov獲取即時CPI...','核心PCE — 正在從FRED獲取...','住房通膨分項 — 滯後但持續向上壓力','5年期通膨損益平衡點 — 市場通膨預期指標'],hist:'1970年代停滯性通膨：CPI峰值14.8%。2022年峰值：9.1%。當前：逐步正常化。'},
+    banking:{name:'銀行體系壓力',desc:'2023年SVB/CS衝擊後銀行體系基本穩定。商業不動產仍為關鍵風險。',signals:['聯準會BTFP工具已全面退出 — 緊急支撐移除','商業不動產約1.5兆美元貸款將於2024–2027年到期','銀行準備金超3兆美元 — 流動性緩衝充足','地區性銀行商業不動產敞口：辦公室空置率處歷史高位'],hist:'2008年全球金融危機：25家主要銀行倒閉。2023年：3家（矽谷銀行、Signature、第一共和國）。'},
+    debt:{name:'主權債務風險',desc:'截至2026年美國聯邦債務約36兆美元。利息支出已成單項最大財政支出。',signals:['美國國家債務：約36兆美元 — 結構性持續攀升','年度利息支出：約1.1兆美元 — 已超過國防支出','財政赤字：每年約1.8兆美元以上 — 結構性問題','惠譽（AA+）及穆迪負面展望 — 美國信用承壓'],hist:'日本債務/GDP約260%但主要由國內持有。美國債務是全球準備貨幣的系統性風險。'},
+    liquidity:{name:'流動性狀況',desc:'聯準會2024年暫停量化緊縮，資產負債表縮減步伐放緩，美元流動性充裕。',signals:['量化緊縮步伐減緩 — 準備金消耗明顯放緩','附買回市場穩定 — 隔夜利率接近聯邦基金目標利率','美元換匯額度激活 — 國際美元需求得到滿足','貨幣市場基金約7兆美元 — 創歷史新高'],hist:'2019年附買回危機：隔夜利率飆升至10%。當前準備金仍充裕。'},
+    housing:{name:'房地產市場壓力',desc:'儘管聯準會小幅降息，可負擔性仍處歷史低位，現有住宅銷售陷入僵局。',signals:['30年期抵押貸款利率約6.5–7% — 可負擔性處數十年低位','住房可負擔性指數接近40年低點','現有住宅銷售低迷 — 「鎖定效應」來自2020-21年低利率','房價依然偏高 — 目前尚無大範圍價格回調'],hist:'2008年房地產崩盤導致全球金融危機，房價全國性下跌逾30%。'},
+    geopolitical:{name:'地緣政治風險',desc:'多重活躍風險：貿易戰、區域衝突、中美科技脫鉤。',signals:['中美貿易戰升級 — 關稅與科技出口管制持續擴大','俄烏衝突持續 — 歐洲能源安全風險','中東緊張局勢 — 紅海航運中斷部分緩解','台海風險上升 — 半導體供應鏈集中度風險'],hist:'1973年石油禁運引發停滯性通膨。2026年地緣政治風險更為多維複雜。'},
+    private_credit:{name:'私人信貸風險',desc:'約1.7兆美元私人信貸市場存在流動性與估值風險，監管透明度不足。',signals:['市場規模約1.7兆美元 — 2015年以來增長5倍，監管不透明','到期牆：約5000億美元以上私人貸款將於2025–2027年到期','違約率上升 — 高利率侵蝕借款人償債覆蓋比率','80%以上新私人貸款為寬契約貸款 — 貸款人保護極少'],hist:'2008年全球金融危機時私人信貸規模甚小。零利率環境下2015年後的快速增長在高利率時代面臨未經檢驗的壓力。'},
+  },
+  ja:{
+    yield_curve:{name:'利回り曲線の逆転',desc:'3ヶ月と10年米国債の利回り差 — 重要な景気後退指標。',signals:['FRED / Yahoo Financeよりリアルタイム利回りデータを取得中...','歴史的的中率：8回の景気後退のうち7回が逆転先行','逆転は歴史的に12〜18ヶ月前に景気後退を示唆','再スティープニングに注目 — 景気後退開始シグナルとなることが多い'],hist:'2006-2007年：GFC前に18ヶ月逆転。2019年：COVID前に一時逆転。'},
+    credit_stress:{name:'クレジット市場ストレス',desc:'ハイイールドおよび投資適格クレジットスプレッドが企業債務市場のストレスを示す。',signals:['HYスプレッド — 400bps超の持続はクライシスシグナル','IGスプレッド — 正常範囲80〜120bps；150bps超は警戒','CCC格付け債 — スプレッド900bps超は窮境','銀行融資基準（SLOOS）— 引き締め傾向が継続'],hist:'2007年GFC前：HYスプレッドは約250bps、2008年に1800bpsへ急騰。'},
+    volatility:{name:'市場変動性（VIX）',desc:'VIXはS&P500オプションの30日間インプライドボラティリティを測定 — 「恐怖指数」。',signals:['Yahoo FinanceよりリアルタイムVIXを取得中...','VIX 15未満 = 楽観的な安心感 — 史的に調整の前兆','VIX 30超 = 市場パニック；50超 = システミッククライシス','VVIX高水準 — マクロショック時のボラティリティ急騰リスク'],hist:'VIX 15未満が2020年COVID暴落前に発生。2008年GFC時のVIXは89まで上昇。'},
+    inflation:{name:'インフレ圧力',desc:'CPIとコアPCEをFRBの2%目標比較 — 根強いインフレが高金利を長期化させる。',signals:['BLS.govよりリアルタイムCPIを取得中...','コアPCE — FREDより取得中...','住宅インフレ — 遅行するが上昇圧力が持続','5年インフレ損益分岐点 — 市場インフレ期待指標'],hist:'1970年代スタグフレーション：CPI最大14.8%。2022年のピーク：9.1%。現在：正常化中。'},
+    banking:{name:'銀行システムストレス',desc:'2023年SVB/CSショック後、銀行システムは概ね安定。商業不動産が主要リスク。',signals:['FRBのBTFP終了 — 緊急支援措置が撤廃','商業不動産：約1.5兆ドルが2024〜2027年に満期到来','銀行準備金3兆ドル超 — 十分な流動性バッファー','地方銀行の商業不動産エクスポージャー：オフィス空室率が歴史的高水準'],hist:'2008年GFC：25行の主要銀行が破綻。2023年：3行（SVB・Signature・First Republic）。'},
+    debt:{name:'国債リスク',desc:'2026年時点で米国連邦債務は約36兆ドル。利払いが単一最大の予算項目に。',signals:['米国国債：約36兆ドル — 構造的に増加継続','年間利払い：約1.1兆ドル — 国防費を超過','財政赤字：年間約1.8兆ドル超 — 景気循環ではなく構造的問題','フィッチ（AA+）とムーディーズの負の見通し — 米国信用力に圧力'],hist:'日本の債務/GDPは260%だが国内保有が中心。米国債務はグローバル準備通貨のリスク。'},
+    liquidity:{name:'流動性状況',desc:'FRBは2024年にQTを一時停止。バランスシート縮小ペースを低下。ドル流動性は潤沢。',signals:['QTペース減速 — 準備金流出が大幅に鈍化','レポ市場安定 — 翌日物レートがFFレート目標値付近','ドルスワップライン稼働 — 国際的なドル需要に対応','マネーマーケットファンド約7兆ドル — 過去最高（潤沢なドライパウダー）'],hist:'2019年レポ危機：翌日物レートが10%へ急騰。現在の準備金は依然潤沢。'},
+    housing:{name:'住宅市場ストレス',desc:'FRBの小幅利下げにもかかわらず、住宅購入可能性は歴史的低水準。既存住宅販売は停滞。',signals:['30年住宅ローン金利約6.5〜7% — 購入可能性は数十年来の低水準','住宅購入可能性指数は40年近い低水準','既存住宅販売低迷 — 2020〜21年の低金利による「ロックイン効果」','住宅価格は高止まり — 大規模な価格修正はまだ発生せず'],hist:'2008年住宅崩壊：全国で30%超下落。現在は住宅供給不足が異なる構造的要因。'},
+    geopolitical:{name:'地政学的リスク',desc:'複数の活発なリスク：貿易戦争、地域紛争、米中ハイテク分断。',signals:['米中貿易戦争の激化 — 関税と技術輸出規制が拡大','ロシア・ウクライナ紛争継続 — 欧州エネルギー安全保障リスク','中東緊張 — 紅海航路の混乱は部分的に解消','台湾海峡リスク上昇 — 半導体サプライチェーンの集中リスク'],hist:'1973年石油禁輸がスタグフレーションを引き起こす。2026年の地政学リスクはより多面的。'},
+    private_credit:{name:'プライベートクレジットリスク',desc:'約1.7兆ドルのプライベートクレジット市場は流動性・評価リスクを抱え、規制の透明性が低い。',signals:['市場規模約1.7兆ドル — 2015年以来5倍成長、規制が不透明','満期の壁：約5000億ドル超のプライベートローンが2025〜2027年に満期','デフォルト率上昇 — 高金利が借り手のカバレッジ比率を浸食','新規プライベートローンの80%超がコベナント・ライト — 貸し手保護が極めて薄い'],hist:'2008年GFC時のプライベートクレジットはほぼ存在せず。ゼロ金利時代に急成長した同市場は高金利環境下でのストレスが未検証。'},
+  },
+  ko:{
+    yield_curve:{name:'수익률 곡선 역전',desc:'3개월과 10년 미국채 수익률 스프레드 — 핵심 경기침체 지표.',signals:['FRED / Yahoo Finance에서 실시간 수익률 데이터 가져오는 중...','역사적 적중률: 8번의 침체 중 7번이 역전 선행','역전 후 역사적으로 12~18개월 뒤 경기침체 발생','재스티프닝 주목 — 경기침체 시작 신호인 경우 많음'],hist:'2006-2007년: GFC 18개월 전 역전. 2019년: COVID 직전 단기 역전.'},
+    credit_stress:{name:'신용시장 스트레스',desc:'하이일드 및 투자등급 신용 스프레드가 기업 채무 시장의 스트레스를 나타냄.',signals:['HY 스프레드 — 400bps 이상 지속 시 위기 신호','IG 스프레드 — 정상 범위 80~120bps; 150bps 초과 시 주의','CCC 등급 채권 — 900bps 초과 시 부실 상태','은행 대출 기준(SLOOS) — 긴축 추세 지속'],hist:'2007년 GFC 이전: HY 스프레드 약 250bps, 2008년 1800bps로 급등.'},
+    volatility:{name:'시장 변동성 (VIX)',desc:'VIX는 S&P 500 옵션의 30일 내재 변동성 — "공포 지수".',signals:['Yahoo Finance에서 실시간 VIX 가져오는 중...','VIX 15 미만 = 자기만족 구간 — 역사적으로 조정 선행','VIX 30 초과 = 시장 공황; 50 초과 = 시스템 위기','VVIX 상승 — 매크로 충격 시 변동성 급등 리스크'],hist:'VIX 15 미만이 2020년 COVID 폭락 이전에 나타남. 2008년 GFC 시 VIX는 89까지 상승.'},
+    inflation:{name:'인플레이션 압력',desc:'CPI와 코어 PCE의 연준 2% 목표 대비 — 끈적한 인플레이션이 고금리를 장기화시킴.',signals:['BLS.gov에서 실시간 CPI 가져오는 중...','코어 PCE — FRED에서 가져오는 중...','주거 인플레이션 — 후행하지만 지속적인 상승 압력','5년 인플레이션 손익분기점 — 시장 인플레이션 기대 지표'],hist:'1970년대 스태그플레이션: CPI 최고 14.8%. 2022년 최고치: 9.1%. 현재: 정상화 중.'},
+    banking:{name:'은행 시스템 스트레스',desc:'2023년 SVB/CS 충격 이후 은행 시스템은 대체로 안정. 상업용 부동산이 핵심 위험.',signals:['연준 BTFP 종료 — 긴급 지원 철회','상업용 부동산 약 1.5조 달러 대출이 2024~2027년 만기','은행 지급준비금 3조 달러 초과 — 충분한 유동성 완충','지역 은행 상업용 부동산 익스포저: 사무실 공실률 역사적 고점'],hist:'2008년 GFC: 25개 주요 은행 파산. 2023년: 3개(SVB·Signature·First Republic).'},
+    debt:{name:'국가 채무 위험',desc:'2026년 기준 미국 연방 부채 약 36조 달러. 이자 비용이 단일 최대 예산 항목.',signals:['미국 국가 채무: 약 36조 달러 — 구조적으로 계속 증가','연간 이자 비용: 약 1.1조 달러 — 국방비 초과','재정 적자: 연간 1.8조 달러 이상 — 경기적이 아닌 구조적 문제','피치(AA+) 및 무디스 부정적 전망 — 미국 신용 압박'],hist:'일본 부채/GDP 260%는 국내 보유 중심. 미국 채무는 글로벌 준비통화 위험.'},
+    liquidity:{name:'유동성 상황',desc:'연준은 2024년 QT 일시 중단. 대차대조표 축소 속도 감소. 달러 유동성 풍부.',signals:['QT 속도 감소 — 지급준비금 유출 대폭 둔화','레포 시장 안정 — 익일물 금리 연방기금 목표 근접','달러 스왑 라인 가동 — 국제 달러 수요 충족','머니마켓 펀드 약 7조 달러 — 사상 최고치'],hist:'2019년 레포 위기: 익일물 금리 10%까지 급등. 현재 지급준비금 충분.'},
+    housing:{name:'주택시장 스트레스',desc:'연준의 소폭 금리 인하에도 주택 구매 가능성은 역사적 최저. 기존 주택 판매 정체.',signals:['30년 모기지 금리 약 6.5~7% — 수십 년 최저 수준의 구매 가능성','주택 구매 가능성 지수 40년 최저 근접','기존 주택 판매 부진 — 2020~21년 저금리의 "잠금 효과"','주택 가격 여전히 높음 — 아직 광범위한 가격 조정 없음'],hist:'2008년 주택 붕괴: 전국적으로 30% 이상 하락. 현재는 주택 부족으로 구조적으로 다름.'},
+    geopolitical:{name:'지정학적 위험',desc:'다중 활성 위험 벡터: 무역 전쟁, 지역 분쟁, 미중 기술 디커플링.',signals:['미중 무역 전쟁 확대 — 관세 및 기술 수출 통제 확대','러시아-우크라이나 분쟁 지속 — 유럽 에너지 안보 위험','중동 긴장 — 홍해 해운 차질 부분 해소','대만해협 위험 상승 — 반도체 공급망 집중 위험'],hist:'1973년 석유 금수 조치가 스태그플레이션 촉발. 2026년 지정학적 위험은 더 다면적.'},
+    private_credit:{name:'프라이빗 크레딧 위험',desc:'약 1.7조 달러 프라이빗 크레딧 시장의 유동성·평가 위험, 규제 투명성 부족.',signals:['시장 규모 약 1.7조 달러 — 2015년 이후 5배 성장, 불투명한 규제','만기 벽: 약 5000억 달러 이상의 대출이 2025~2027년 만기','부도율 상승 — 고금리가 차입자 커버리지 비율 잠식','신규 대출의 80% 이상이 코버넌트-라이트 — 대출자 보호 취약'],hist:'2008년 GFC 당시 프라이빗 크레딧은 거의 없었음. 제로금리 시대 2015년 이후 급성장이 고금리 환경에서 검증되지 않은 스트레스 유발.'},
+  },
+  es:{
+    yield_curve:{name:'Inversión de la Curva de Rendimientos',desc:'Diferencial entre bonos del Tesoro a 3M y 10A — indicador clave de recesión.',signals:['Obteniendo datos de rendimiento en vivo desde FRED / Yahoo Finance...','Tasa de acierto histórica: 7/8 recesiones precedidas por inversión','La curva invertida precede históricamente a la recesión 12–18 meses','Vigilar re-empinamiento — suele señalar inicio de recesión'],hist:'2006-2007: Curva invertida 18 meses antes de la GFC. 2019: breve inversión antes del COVID.'},
+    credit_stress:{name:'Estrés del Mercado Crediticio',desc:'Los spreads de crédito de alto rendimiento e investment grade señalan estrés en los mercados de deuda corporativa.',signals:['Spreads HY — vigilar movimiento sostenido sobre 400bps (señal de crisis)','Spreads IG — rango normal 80–120bps; elevados si superan 150bps','Bonos CCC — en dificultades si spreads superan 900bps','Estándares bancarios (encuesta SLOOS) — tendencia de ajuste presente'],hist:'Pre-GFC 2007: spreads HY ~250bps antes de dispararse a 1800bps en 2008.'},
+    volatility:{name:'Volatilidad del Mercado (VIX)',desc:'VIX mide la volatilidad implícita a 30 días de las opciones del S&P 500 — el "indicador del miedo".',signals:['Obteniendo VIX en vivo desde Yahoo Finance...','VIX bajo 15 = zona de complacencia — precede correcciones históricamente','VIX sobre 30 = pánico; sobre 50 = crisis sistémica','VVIX elevado — riesgo de pico de vol si ocurre shock macroeconómico'],hist:'VIX bajo 15 precedió la caída del COVID en 2020. VIX llegó a 89 durante la GFC 2008.'},
+    inflation:{name:'Presión Inflacionaria',desc:'CPI y Core PCE respecto al objetivo del 2% de la Fed — la inflación persistente prolonga las altas tasas.',signals:['Obteniendo CPI en vivo desde BLS.gov...','Core PCE — obteniendo desde FRED...','Componente de alquiler/vivienda — presión al alza rezagada pero persistente','Puntos de equilibrio de inflación a 5A — indicador de expectativas del mercado'],hist:'Estanflación de los 70s: CPI máximo 14.8%. Pico 2022: 9.1%. Actual: normalizándose.'},
+    banking:{name:'Estrés del Sistema Bancario',desc:'El sistema bancario estable tras los shocks SVB/CS de 2023. El inmueble comercial sigue siendo riesgo clave.',signals:['Programa BTFP de la Fed finalizado — apoyo de emergencia retirado','Inmueble comercial: ~$1.5T en vencimientos 2024–2027 — riesgo refinanciación','Reservas bancarias sobre $3T — amortiguador de liquidez adecuado','Exposición bancaria regional a CRE: tasas de vacantes de oficinas en máximos históricos'],hist:'GFC 2008: 25 quiebras bancarias. 2023: 3 (Silicon Valley Bank, Signature, First Republic).'},
+    debt:{name:'Riesgo de Deuda Soberana',desc:'Deuda federal de EE.UU. ~$36T en 2026. Pago de intereses ya es la mayor partida del presupuesto.',signals:['Deuda nacional: ~$36 billones — sigue creciendo estructuralmente','Gasto anual en intereses: ~$1.1T — supera gasto en defensa','Déficit: ~$1.8T+ anual — estructural, no cíclico','Fitch (AA+) y perspectiva negativa de Moody\'s — presión sobre crédito de EE.UU.'],hist:'La deuda/PIB de Japón es 260% pero mantenida internamente. La deuda de EE.UU. es riesgo de la moneda de reserva global.'},
+    liquidity:{name:'Condiciones de Liquidez',desc:'Fed pausó QT en 2024. Ritmo de reducción del balance desacelerado. Liquidez en dólares amplia.',signals:['Ritmo QT reducido — drenaje de reservas desacelerado significativamente','Mercado repo estable — tasas a un día cerca del objetivo de fondos federales','Líneas de swap en dólares activas — demanda internacional de USD satisfecha','Fondos monetarios ~$7T — máximo histórico (abundante pólvora seca)'],hist:'Crisis repo 2019: tasas overnight hasta 10%. Reservas actuales siguen siendo amplias.'},
+    housing:{name:'Estrés del Mercado Inmobiliario',desc:'Accesibilidad en mínimos históricos pese a modestas bajadas de tipos. Ventas de viviendas existentes congeladas.',signals:['Hipoteca a 30A ~6.5–7% — accesibilidad en mínimos de varias décadas','Índice de accesibilidad vivienda cerca de mínimos de 40 años','Ventas existentes deprimidas — "efecto lock-in" de tasas bajas 2020-21','Precios de vivienda elevados — sin corrección generalizada hasta ahora'],hist:'Colapso inmobiliario 2008: precios cayeron +30% a nivel nacional con impagos masivos.'},
+    geopolitical:{name:'Riesgo Geopolítico',desc:'Múltiples vectores de riesgo activos: guerras comerciales, conflictos regionales, desacoplamiento tecnológico EE.UU.-China.',signals:['Escalada guerra comercial EE.UU.-China — aranceles y controles de exportación ampliándose','Conflicto Rusia-Ucrania en curso — riesgo seguridad energética europea','Tensiones en Oriente Medio — perturbaciones Mar Rojo parcialmente resueltas','Riesgo estrecho de Taiwán elevado — concentración cadena suministro semiconductores'],hist:'Embargo petrolero 1973 desencadenó estanflación. El riesgo geopolítico de 2026 es más multivectorial.'},
+    private_credit:{name:'Riesgo de Crédito Privado',desc:'El mercado de crédito privado de ~$1.7T presenta riesgos de liquidez y valoración con escasa transparencia regulatoria.',signals:['Tamaño del mercado ~$1.7T — creció 5× desde 2015, en gran parte no regulado','Muro de vencimientos: ~$500B+ en préstamos privados venciendo 2025–2027','Tasas de impago en aumento — tipos altos erosionan ratios de cobertura','+80% de nuevos préstamos son covenant-lite — protecciones mínimas para prestamistas'],hist:'El crédito privado apenas existía en la GFC 2008. El rápido crecimiento post-2015 en entorno de tipos cero crea dinámicas de estrés no probadas con tipos altos.'},
+  },
+  ar_ae:{
+    yield_curve:{name:'انعكاس منحنى العائد',desc:'الفارق بين سندات الخزانة 3 أشهر و10 سنوات — مؤشر ركود رئيسي.',signals:['جاري جلب بيانات العائد المباشرة من FRED / Yahoo Finance...','معدل الدقة التاريخي: 7 من 8 ركودات سبقها انعكاس','الانعكاس يسبق الركود تاريخياً بـ 12–18 شهراً','مراقبة إعادة التحدب — غالباً إشارة لبدء الركود'],hist:'2006-2007: انعكاس لمدة 18 شهراً قبل الأزمة المالية العالمية. 2019: انعكاس قصير قبل كوفيد.'},
+    credit_stress:{name:'ضغط سوق الائتمان',desc:'فوارق ائتمان السندات عالية المخاطر والاستثمارية تشير لضغوط في أسواق الديون.',signals:['فوارق HY — حركة مستمرة فوق 400bps إشارة أزمة','فوارق IG — النطاق الطبيعي 80–120bps؛ مرتفعة إذا تجاوزت 150bps','سندات CCC — متعثرة إذا تجاوزت الفوارق 900bps','معايير الإقراض المصرفي (SLOOS) — اتجاه تشديد قائم'],hist:'قبل أزمة 2007: فوارق HY ~250bps قبل أن ترتفع إلى 1800bps عام 2008.'},
+    volatility:{name:'تقلبات السوق (VIX)',desc:'VIX يقيس التقلب الضمني 30 يوماً لخيارات S&P 500 — "مقياس الخوف".',signals:['جاري جلب بيانات VIX المباشرة من Yahoo Finance...','VIX أقل من 15 = منطقة الغرور — تاريخياً يسبق التصحيحات','VIX فوق 30 = ذعر السوق؛ فوق 50 = أزمة منهجية','VVIX مرتفع — خطر قفزة التقلبات عند حدوث صدمة اقتصادية'],hist:'VIX أقل من 15 سبق انهيار كوفيد 2020. وصل VIX إلى 89 خلال أزمة 2008.'},
+    inflation:{name:'ضغوط التضخم',desc:'CPI والـ PCE الأساسي مقارنةً بهدف الفيدرالي 2% — التضخم المتشبث يطيل دورة الفائدة المرتفعة.',signals:['جاري جلب بيانات CPI المباشرة من BLS.gov...','PCE الأساسي — جاري الجلب من FRED...','تضخم مكوّن السكن — ضغط صاعد متأخر لكن مستمر','نقاط التعادل التضخمي لـ 5 سنوات — مؤشر توقعات التضخم في السوق'],hist:'الركود التضخمي السبعينيات: بلغ CPI 14.8%. ذروة 2022: 9.1%. الحالي: يتحول للطبيعي.'},
+    banking:{name:'ضغوط النظام المصرفي',desc:'النظام المصرفي مستقر نسبياً بعد صدمات SVB/CS 2023. العقارات التجارية لا تزال خطراً رئيسياً.',signals:['انتهاء برنامج BTFP للفيدرالي — إزالة شبكة الأمان الطارئة','استحقاق ~1.5 تريليون دولار من قروض العقارات التجارية 2024–2027','احتياطيات مصرفية فوق 3 تريليون — وسادة سيولة كافية','تعرض البنوك الإقليمية للعقارات التجارية: معدلات شواغر المكاتب قياسية'],hist:'أزمة 2008: 25 إفلاساً مصرفياً. 2023: 3 بنوك (SVB، Signature، First Republic).'},
+    debt:{name:'مخاطر الديون السيادية',desc:'الدين الفيدرالي الأمريكي ~36 تريليون دولار بحلول 2026. مدفوعات الفوائد أصبحت أكبر بند في الميزانية.',signals:['الدين القومي: ~36 تريليون دولار — يتصاعد هيكلياً','الفائدة السنوية: ~1.1 تريليون — تجاوزت الإنفاق الدفاعي','العجز: ~1.8 تريليون+ سنوياً — هيكلي لا دوري','فيتش (AA+) وموديز: نظرة سلبية — ضغط على التصنيف الائتماني'],hist:'ديون اليابان/الناتج 260% لكنها مملوكة محلياً. الدين الأمريكي خطر على عملة الاحتياطي العالمي.'},
+    liquidity:{name:'أوضاع السيولة',desc:'أوقف الفيدرالي التشديد الكمي عام 2024. تباطؤ وتيرة تقليص الميزانية. سيولة دولارية وفيرة.',signals:['تباطؤ وتيرة التشديد الكمي — تراجع ملحوظ في استنزاف الاحتياطيات','سوق الريبو مستقر — معدلات ليلية قرب هدف الفيدرالي','خطوط مقايضة الدولار نشطة — تلبية الطلب الدولاري الدولي','صناديق سوق المال ~7 تريليون — مستوى قياسي'],hist:'أزمة ريبو 2019: قفزت المعدلات الليلية إلى 10%. الاحتياطيات الحالية لا تزال وفيرة.'},
+    housing:{name:'ضغوط سوق الإسكان',desc:'القدرة على التحمل عند أدنى مستوياتها التاريخية رغم خفض الفائدة. مبيعات المساكن القائمة متجمدة.',signals:['معدل الرهن العقاري 30 سنة ~6.5–7% — القدرة على الشراء عند أدنى مستوى لعقود','مؤشر القدرة على تحمل السكن قرب أدنى مستوى منذ 40 عاماً','مبيعات المساكن القائمة متدنية — "تأثير القفل" من معدلات 2020–21 المنخفضة','أسعار المنازل لا تزال مرتفعة — لا تصحيح واسع حتى الآن'],hist:'انهيار الإسكان 2008: انخفضت الأسعار 30%+ على المستوى الوطني.'},
+    geopolitical:{name:'المخاطر الجيوسياسية',desc:'متجهات مخاطر متعددة: حروب تجارية، نزاعات إقليمية، فك الارتباط التكنولوجي الأمريكي-الصيني.',signals:['تصعيد الحرب التجارية الأمريكية-الصينية — توسع التعريفات وضوابط التصدير التكنولوجي','استمرار الصراع الروسي-الأوكراني — خطر أمن الطاقة الأوروبي','التوترات الشرق أوسطية — اضطرابات شحن البحر الأحمر تحل جزئياً','ارتفاع مخاطر مضيق تايوان — تركز سلسلة توريد أشباه الموصلات'],hist:'حظر النفط 1973 أشعل فتيل الركود التضخمي. مخاطر 2026 الجيوسياسية أكثر تعدداً.'},
+    private_credit:{name:'مخاطر الائتمان الخاص',desc:'سوق الائتمان الخاص البالغ ~1.7 تريليون دولار يحمل مخاطر سيولة وتقييم مع شفافية تنظيمية محدودة.',signals:['حجم السوق ~1.7 تريليون — نما 5× منذ 2015، غير منظم إلى حد بعيد','جدار الاستحقاقات: ~500 مليار+ من القروض الخاصة تستحق 2025–2027','ارتفاع معدلات التعثر — الفائدة المرتفعة تآكل نسب تغطية المقترضين','80%+ من القروض الخاصة الجديدة بدون تعهدات — حماية محدودة للمقرضين'],hist:'الائتمان الخاص كان شبه معدوم في أزمة 2008. النمو السريع بعد 2015 في بيئة الفائدة الصفرية يخلق ضغوطاً لم تُختبر في بيئة الفائدة المرتفعة.'},
+  },
+};
+// Gulf Arabic variants share same content
+CRISIS_TEXT.ar_sa = CRISIS_TEXT.ar_ae;
+CRISIS_TEXT.ar_kw = CRISIS_TEXT.ar_ae;
+CRISIS_TEXT.ar_qa = CRISIS_TEXT.ar_ae;
+
+function getCrisisText(lang, id, field){
+  const lt = CRISIS_TEXT[lang]?.[id];
+  return lt ? lt[field] : null;
+}
+
 function renderCrisisCards(){
   const el = document.getElementById('crisisCardsEl');
   if(!el) return;
   const lang = currentLang || 'en';
+  const T = TRANSLATIONS[lang] || TRANSLATIONS.en;
+  const badgeHigh   = {'en':'HIGH RISK','zh_CN':'高风险','zh_TW':'高風險','ja':'高リスク','ko':'고위험','es':'ALTO RIESGO','ar_ae':'خطر مرتفع','ar_sa':'خطر مرتفع','ar_kw':'خطر مرتفع','ar_qa':'خطر مرتفع'}[lang] || 'HIGH RISK';
+  const badgeMed    = {'en':'CAUTION',  'zh_CN':'警告',   'zh_TW':'警告',  'ja':'注意',    'ko':'주의',   'es':'PRECAUCIÓN','ar_ae':'تحذير',    'ar_sa':'تحذير',    'ar_kw':'تحذير',    'ar_qa':'تحذير'}[lang]   || 'CAUTION';
+  const badgeLow    = {'en':'LOW RISK', 'zh_CN':'低风险','zh_TW':'低風險','ja':'低リスク','ko':'저위험','es':'RIESGO BAJO','ar_ae':'خطر منخفض','ar_sa':'خطر منخفض','ar_kw':'خطر منخفض','ar_qa':'خطر منخفض'}[lang]   || 'LOW RISK';
+  const riskScore   = {'en':'Risk Score','zh_CN':'风险评分','zh_TW':'風險評分','ja':'リスクスコア','ko':'위험 점수','es':'Puntuación de Riesgo','ar_ae':'درجة المخاطر','ar_sa':'درجة المخاطر','ar_kw':'درجة المخاطر','ar_qa':'درجة المخاطر'}[lang] || 'Risk Score';
+
   el.innerHTML = CRISIS.indicators.map(c=>{
     const cls = c.level==='high'?'danger-card':c.level==='med'?'caution-card':'safe-card';
     const badgeCls = c.level==='high'?'clb-high':c.level==='med'?'clb-medium':'clb-low';
-    const badgeTxt = c.level==='high'?'HIGH RISK':c.level==='med'?'CAUTION':'LOW RISK';
+    const badgeTxt = c.level==='high'?badgeHigh:c.level==='med'?badgeMed:badgeLow;
     const scoreColor = c.level==='high'?'var(--red)':c.level==='med'?'var(--gold)':'var(--green)';
+    const ct = CRISIS_TEXT[lang]?.[c.id];
+    const cardName = ct?.name || c.name;
+    const cardDesc = ct?.desc || c.desc;
+    const cardHist = ct?.hist || c.hist;
+    const cardSignals = ct?.signals
+      ? c.signals.map((s,i)=>({...s, t: ct.signals[i] || s.t}))
+      : c.signals;
     return `
       <div class="crisis-card ${cls}">
-        <div class="crisis-name">${c.icon} ${c.name}</div>
+        <div class="crisis-name">${c.icon} ${cardName}</div>
         <div class="crisis-score-big" style="color:${scoreColor}">${c.score}</div>
         <div class="crisis-level-badge ${badgeCls}">${badgeTxt} · ${c.value}</div>
-        <div style="font-size:11px;color:var(--muted2);line-height:1.6;margin-bottom:10px;">${annotateFin(c.desc, lang)}</div>
+        <div style="font-size:11px;color:var(--muted2);line-height:1.6;margin-bottom:10px;">${annotateFin(cardDesc, lang)}</div>
         <div class="crisis-indicators">
-          ${c.signals.map(s=>`
+          ${cardSignals.map(s=>`
             <div class="ci-row">
               <div class="ci-dot" style="background:${s.danger?'var(--red)':'var(--green)'}"></div>
               <span style="font-size:11px">${annotateFin(s.t, lang)}</span>
             </div>
           `).join('')}
         </div>
-        <div style="margin-top:8px;font-size:10px;color:var(--muted);font-style:italic;border-top:1px solid var(--border);padding-top:7px;">${annotateFin(c.hist, lang)}</div>
+        <div style="margin-top:8px;font-size:10px;color:var(--muted);font-style:italic;border-top:1px solid var(--border);padding-top:7px;">${annotateFin(cardHist, lang)}</div>
         <!-- mini score bar -->
         <div style="margin-top:10px;">
           <div style="display:flex;justify-content:space-between;font-size:9.5px;margin-bottom:4px;font-family:'Courier New',Courier,monospace;">
-            <span style="color:var(--muted2)">Risk Score</span>
+            <span style="color:var(--muted2)">${riskScore}</span>
             <span style="color:${scoreColor};font-weight:800;">${c.score}/100</span>
           </div>
           <div style="height:5px;background:rgba(255,255,255,0.05);border-radius:3px;overflow:hidden;">
