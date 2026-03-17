@@ -1444,6 +1444,13 @@ body::before{
   <select id="langSelect" onchange="applyLanguage(this.value)"
     style="background:var(--bg3);border:1px solid var(--border2);color:var(--text);padding:4px 8px;border-radius:7px;font-family:Arial,'Noto Sans',sans-serif;font-size:11px;cursor:pointer;outline:none;max-width:140px;">
     <option value="en">🇺🇸 English</option>
+    <option value="es">🇪🇸 Español</option>
+    <option value="fr">🇫🇷 Français</option>
+    <option value="de">🇩🇪 Deutsch</option>
+    <option value="pt">🇧🇷 Português</option>
+    <option value="ar">🇸🇦 العربية</option>
+    <option value="ja">🇯🇵 日本語</option>
+    <option value="ko">🇰🇷 한국어</option>
     <option value="zh_CN">🇨🇳 简体中文</option>
     <option value="zh_TW">🇹🇼 繁體中文</option>
     <option value="th">🇹🇭 ภาษาไทย</option>
@@ -1513,6 +1520,11 @@ body::before{
     <div class="cm-name">Liquidity</div>
     <div class="cm-bar"><div class="cm-fill" style="width:31%"></div></div>
     <div class="cm-val">31</div>
+  </div>
+  <div class="crisis-meter level-high" onclick="goPage('crisis')" title="Private Credit Risk">
+    <div class="cm-name">Pvt Credit</div>
+    <div class="cm-bar"><div class="cm-fill" style="width:68%"></div></div>
+    <div class="cm-val">68</div>
   </div>
   <div class="cs-overall caution" onclick="goPage('crisis')" id="crisisOverall">
     ⚠️ CAUTION · Score: 48/100
@@ -2466,16 +2478,16 @@ const MD = {
     {t:"PPI data due Tuesday; hotter print could push Fed rate cuts to Q4 2024",cat:'fed',sent:'bear',time:'13h ago',src:'MarketWatch'},
   ],
   watchlist:[
-    {s:'SPY',n:'S&P 500 ETF',p:'521.87',c:'+0.84%',up:true,icon:'📊',sig:'LONG'},
-    {s:'QQQ',n:'NASDAQ 100 ETF',p:'447.12',c:'+1.14%',up:true,icon:'💻',sig:'LONG'},
-    {s:'NVDA',n:'NVIDIA Corp',p:'875.40',c:'+6.82%',up:true,icon:'🟩',sig:'LONG'},
-    {s:'AAPL',n:'Apple Inc.',p:'171.15',c:'+0.44%',up:true,icon:'🍎',sig:'NEUTRAL'},
-    {s:'META',n:'Meta Platforms',p:'507.21',c:'+3.14%',up:true,icon:'👤',sig:'LONG'},
-    {s:'BTC',n:'Bitcoin',p:'$67,432',c:'+2.14%',up:true,icon:'₿',sig:'LONG'},
-    {s:'GLD',n:'Gold ETF',p:'202.14',c:'+0.38%',up:true,icon:'🥇',sig:'LONG'},
-    {s:'TLT',n:'20+ Yr Bond ETF',p:'94.28',c:'-0.22%',up:false,icon:'🏛️',sig:'WATCH'},
-    {s:'XOM',n:'ExxonMobil',p:'112.44',c:'-1.72%',up:false,icon:'🛢️',sig:'SHORT'},
-    {s:'EUR/USD',n:'Euro/Dollar',p:'1.0872',c:'-0.12%',up:false,icon:'💶',sig:'SHORT'},
+    {s:'SPY',n:'S&P 500 ETF',p:'—',c:'—',up:true,icon:'📊',sig:'LONG'},
+    {s:'QQQ',n:'NASDAQ 100 ETF',p:'—',c:'—',up:true,icon:'💻',sig:'LONG'},
+    {s:'NVDA',n:'NVIDIA Corp',p:'—',c:'—',up:true,icon:'🟩',sig:'LONG'},
+    {s:'AAPL',n:'Apple Inc.',p:'—',c:'—',up:true,icon:'🍎',sig:'NEUTRAL'},
+    {s:'META',n:'Meta Platforms',p:'—',c:'—',up:true,icon:'👤',sig:'LONG'},
+    {s:'BTC',n:'Bitcoin',p:'—',c:'—',up:true,icon:'₿',sig:'LONG'},
+    {s:'GLD',n:'Gold ETF',p:'—',c:'—',up:true,icon:'🥇',sig:'LONG'},
+    {s:'TLT',n:'20+ Yr Bond ETF',p:'—',c:'—',up:false,icon:'🏛️',sig:'WATCH'},
+    {s:'XOM',n:'ExxonMobil',p:'—',c:'—',up:false,icon:'🛢️',sig:'SHORT'},
+    {s:'EUR/USD',n:'Euro/Dollar',p:'—',c:'—',up:false,icon:'💶',sig:'SHORT'},
   ],
   heatSectors:[
     {n:'Technology',c:2.14,icon:'💻'},
@@ -2513,6 +2525,18 @@ async function callClaude(prompt, targetEl, systemMsg='') {
     return;
   }
 
+  // Language instruction for AI responses
+  const langNames = {
+    en:'English', es:'Spanish', fr:'French', de:'German', pt:'Portuguese',
+    ar:'Arabic', ja:'Japanese', ko:'Korean',
+    zh_CN:'Simplified Chinese', zh_TW:'Traditional Chinese',
+    th:'Thai', vi:'Vietnamese', id:'Indonesian', ms:'Malay', fil:'Filipino', dz:'Dzongkha'
+  };
+  const responseLang = langNames[currentLang] || 'English';
+  const langInstruction = currentLang !== 'en'
+    ? `\n- IMPORTANT: Respond entirely in ${responseLang}. All analysis, bullets, and conclusions must be in ${responseLang}.`
+    : '';
+
   const body = {
     model:'claude-sonnet-4-6',
     max_tokens:1000,
@@ -2525,7 +2549,7 @@ Provide concise, actionable insights formatted in HTML using these classes:
 - Use bullet points with • character (plain text bullets, no HTML list tags)
 - Keep response under 250 words. Be direct and professional.
 - Include specific numbers, percentages where relevant.
-- End with a clear directional bias statement.`,
+- End with a clear directional bias statement.${langInstruction}`,
     messages:[{role:'user',content:prompt}]
   };
 
@@ -3878,6 +3902,22 @@ const CRISIS = {
       ],
       hist:'1973 oil embargo triggered stagflation. 2026 geopolitical risk is more multi-vector.'
     },
+    {
+      id:'private_credit', name:'Private Credit Risk', score:68, level:'high',
+      icon:'🏦', value:'~$1.7T market (2026)',
+      desc:'Private credit has grown 5x since 2015 to ~$1.7T — now rivalling the HY bond market. Opacity, illiquidity, and leverage amplify contagion risk if defaults accelerate.',
+      signals:[
+        {t:'Market size ~$1.7T — grew 5× since 2015, largely unregulated and opaque', danger:true},
+        {t:'Maturity wall: ~$500B+ in private loans maturing 2025–2027 at higher refinancing rates', danger:true},
+        {t:'Default rates rising — higher-for-longer rates eroding borrower coverage ratios', danger:true},
+        {t:'80%+ of new private loans are covenant-lite — minimal lender protections', danger:true},
+        {t:'BDC NAV discounts widening — Business Development Companies under pressure', danger:true},
+        {t:'NAV financing (borrowing against fund NAV) — amplifies contagion if marks fall', danger:true},
+        {t:'Insurance company exposure large — life insurers hold illiquid private credit allocations', danger:true},
+        {t:'No real-time price discovery — mark-to-model valuations may lag true credit deterioration', danger:true},
+      ],
+      hist:'Private credit barely existed in 2008 GFC. Rapid growth post-2015 in a zero-rate environment creates untested stress dynamics in a higher-rate world.'
+    },
   ],
   historical:[
     {crisis:'2008 Global Financial Crisis', yieldCurve:'-40bps', creditSpread:'+1800bps HY', vix:'80', debt:'68%', housing:'Bubble burst', outcome:'S&P -57%'},
@@ -5081,7 +5121,231 @@ const TRANSLATIONS = {
     mkt_open:'🟢 ཏསོང་ར་ཕཡེ་ཡོད་', mkt_closed:'🔴 ཏསོང་ར་རགཡབ་ཡོད་', mkt_info:'NYSE · NASDAQ',
     mkt_opens:'ET 9:30 AM ལ་ཕཡེ་མི་བཡེད་',
     live_data:'ཏཁད་ཀར་གཞི་གནས་', last_updated:'ཏཁད་ཀར་གཞི་གནས་ — AI རགཡུད་བཞོས་ཉིན་ཏང་ཤའད་འབཡོར་ཡོད་:',
-  }
+  },
+  es: {
+    nav_overview:'Resumen', nav_markets:'Mercados', nav_intelligence:'Análisis IA',
+    nav_dashboard:'Panel', nav_watchlist:'Seguimiento', nav_positions:'Señales y Posiciones',
+    nav_stocks:'Acciones EE.UU.', nav_earnings:'Resultados', nav_bonds:'Bonos y Tasas',
+    nav_commodities:'Materias Primas', nav_forex:'Divisas', nav_crypto:'Criptomonedas',
+    nav_crisis:'Detector de Crisis', nav_company:'Análisis de Empresa', nav_macro:'Economía Macro',
+    nav_liquidity:'Mapa de Liquidez', nav_heatmap:'Mapa de Calor', nav_calendar:'Calendario Económico',
+    nav_news:'Noticias', nav_scanner:'Escáner de Mercado',
+    btn_export:'📤 Exportar', btn_ai:'🤖 Analizar IA', btn_settings:'⚙️ Configuración', btn_refresh:'⟳ Actualizar',
+    pg_dashboard:'Panel de Inteligencia de Mercado', pg_watchlist:'⭐ Lista de Seguimiento',
+    pg_positions:'🎯 Señales de Trading IA', pg_stocks:'📈 Acciones EE.UU.',
+    pg_earnings:'💰 Resultados e Ingresos', pg_bonds:'🏛️ Bonos y Tasas de Interés',
+    pg_commodities:'🛢️ Materias Primas', pg_forex:'💱 Divisas', pg_crypto:'₿ Criptomonedas',
+    pg_macro:'🌐 Economía Macro', pg_liquidity:'💧 Mapa de Liquidez',
+    pg_heatmap:'🔥 Mapa de Calor', pg_calendar:'📅 Calendario Económico',
+    pg_news:'📰 Noticias', pg_crisis:'🚨 Detector de Crisis',
+    pg_company:'🏢 Análisis de Empresa', pg_scanner:'🔍 Escáner de Mercado',
+    scan_asset:'Tipo de Activo', scan_signal:'Señal', scan_minchg:'% Cambio Mín', scan_maxchg:'% Cambio Máx',
+    scan_dir:'Dirección', scan_btn:'🔍 Escanear', scan_all_assets:'Todos los Activos',
+    scan_stocks:'Acciones', scan_crypto:'Cripto', scan_forex:'Divisas', scan_commodities:'Materias Primas',
+    scan_all_signals:'Todas las Señales', scan_long:'Solo LONG', scan_short:'Solo SHORT',
+    scan_neutral:'Neutral', scan_watch:'Vigilar', scan_both_dir:'Sube y Baja',
+    scan_gainers_only:'Solo Subidas ▲', scan_losers_only:'Solo Bajadas ▼', scan_presets:'Presets:',
+    scan_top_gainers:'🚀 Mayores Subidas', scan_top_losers:'📉 Mayores Bajadas',
+    scan_long_signals:'📈 Señales LONG IA', scan_short_signals:'📉 Señales SHORT IA',
+    scan_momentum:'⚡ Momentum (+2%+)', scan_oversold:'🔄 Sobrevendido (-2%-)',
+    scan_crypto_only:'₿ Solo Cripto', scan_run:'Ejecuta un escaneo para ver resultados',
+    scan_ai_btn:'🤖 IA Analizar Resultados',
+    mkt_open:'🟢 Mercado Abierto', mkt_closed:'🔴 Mercado Cerrado', mkt_info:'NYSE · NASDAQ',
+    mkt_opens:'Abre 9:30 AM ET',
+    live_data:'DATOS EN VIVO', last_updated:'Datos en vivo — análisis impulsado por IA. Última actualización:',
+  },
+  fr: {
+    nav_overview:'Vue d\'ensemble', nav_markets:'Marchés', nav_intelligence:'Analyse IA',
+    nav_dashboard:'Tableau de Bord', nav_watchlist:'Surveillance', nav_positions:'Signaux et Positions',
+    nav_stocks:'Actions US', nav_earnings:'Résultats', nav_bonds:'Obligations et Taux',
+    nav_commodities:'Matières Premières', nav_forex:'Devises', nav_crypto:'Cryptomonnaies',
+    nav_crisis:'Détecteur de Crise', nav_company:'Analyse d\'Entreprise', nav_macro:'Économie Macro',
+    nav_liquidity:'Carte de Liquidité', nav_heatmap:'Carte de Chaleur', nav_calendar:'Calendrier Économique',
+    nav_news:'Actualités', nav_scanner:'Scanner de Marché',
+    btn_export:'📤 Exporter', btn_ai:'🤖 Analyser IA', btn_settings:'⚙️ Paramètres', btn_refresh:'⟳ Actualiser',
+    pg_dashboard:'Tableau de Bord Intelligence Marché', pg_watchlist:'⭐ Liste de Surveillance',
+    pg_positions:'🎯 Signaux de Trading IA', pg_stocks:'📈 Actions US',
+    pg_earnings:'💰 Résultats et Revenus', pg_bonds:'🏛️ Obligations et Taux',
+    pg_commodities:'🛢️ Matières Premières', pg_forex:'💱 Devises', pg_crypto:'₿ Cryptomonnaies',
+    pg_macro:'🌐 Économie Macro', pg_liquidity:'💧 Carte de Liquidité',
+    pg_heatmap:'🔥 Carte de Chaleur', pg_calendar:'📅 Calendrier Économique',
+    pg_news:'📰 Actualités', pg_crisis:'🚨 Détecteur de Crise',
+    pg_company:'🏢 Analyse d\'Entreprise', pg_scanner:'🔍 Scanner de Marché',
+    scan_asset:'Type d\'Actif', scan_signal:'Signal', scan_minchg:'% Variation Min', scan_maxchg:'% Variation Max',
+    scan_dir:'Direction', scan_btn:'🔍 Scanner', scan_all_assets:'Tous les Actifs',
+    scan_stocks:'Actions', scan_crypto:'Crypto', scan_forex:'Devises', scan_commodities:'Matières Premières',
+    scan_all_signals:'Tous les Signaux', scan_long:'LONG Seulement', scan_short:'SHORT Seulement',
+    scan_neutral:'Neutre', scan_watch:'Surveiller', scan_both_dir:'Hausse et Baisse',
+    scan_gainers_only:'Hausse Seulement ▲', scan_losers_only:'Baisse Seulement ▼', scan_presets:'Présélections:',
+    scan_top_gainers:'🚀 Plus Grandes Hausses', scan_top_losers:'📉 Plus Grandes Baisses',
+    scan_long_signals:'📈 Signaux LONG IA', scan_short_signals:'📉 Signaux SHORT IA',
+    scan_momentum:'⚡ Momentum (+2%+)', scan_oversold:'🔄 Survendu (-2%-)',
+    scan_crypto_only:'₿ Crypto Seulement', scan_run:'Lancez un scan pour voir les résultats',
+    scan_ai_btn:'🤖 IA Analyser Résultats',
+    mkt_open:'🟢 Marché Ouvert', mkt_closed:'🔴 Marché Fermé', mkt_info:'NYSE · NASDAQ',
+    mkt_opens:'Ouvre 9h30 ET',
+    live_data:'DONNÉES EN DIRECT', last_updated:'Données en direct — analyse par IA. Dernière mise à jour :',
+  },
+  de: {
+    nav_overview:'Übersicht', nav_markets:'Märkte', nav_intelligence:'KI-Analyse',
+    nav_dashboard:'Dashboard', nav_watchlist:'Beobachtungsliste', nav_positions:'Signale & Positionen',
+    nav_stocks:'US-Aktien', nav_earnings:'Ergebnisse', nav_bonds:'Anleihen & Zinsen',
+    nav_commodities:'Rohstoffe', nav_forex:'Devisen', nav_crypto:'Kryptowährungen',
+    nav_crisis:'Krisen-Detektor', nav_company:'Unternehmensanalyse', nav_macro:'Makroökonomie',
+    nav_liquidity:'Liquiditätskarte', nav_heatmap:'Heatmap', nav_calendar:'Wirtschaftskalender',
+    nav_news:'Nachrichten', nav_scanner:'Markt-Scanner',
+    btn_export:'📤 Exportieren', btn_ai:'🤖 KI-Analyse', btn_settings:'⚙️ Einstellungen', btn_refresh:'⟳ Aktualisieren',
+    pg_dashboard:'Marktintelligenz-Dashboard', pg_watchlist:'⭐ Beobachtungsliste',
+    pg_positions:'🎯 KI-Handelssignale', pg_stocks:'📈 US-Aktien',
+    pg_earnings:'💰 Ergebnisse & Umsatz', pg_bonds:'🏛️ Anleihen & Zinsen',
+    pg_commodities:'🛢️ Rohstoffe', pg_forex:'💱 Devisen', pg_crypto:'₿ Kryptowährungen',
+    pg_macro:'🌐 Makroökonomie', pg_liquidity:'💧 Liquiditätskarte',
+    pg_heatmap:'🔥 Heatmap', pg_calendar:'📅 Wirtschaftskalender',
+    pg_news:'📰 Nachrichten', pg_crisis:'🚨 Krisen-Detektor',
+    pg_company:'🏢 Unternehmensanalyse', pg_scanner:'🔍 Markt-Scanner',
+    scan_asset:'Asset-Typ', scan_signal:'Signal', scan_minchg:'% Min-Änderung', scan_maxchg:'% Max-Änderung',
+    scan_dir:'Richtung', scan_btn:'🔍 Scannen', scan_all_assets:'Alle Assets',
+    scan_stocks:'Aktien', scan_crypto:'Krypto', scan_forex:'Devisen', scan_commodities:'Rohstoffe',
+    scan_all_signals:'Alle Signale', scan_long:'Nur LONG', scan_short:'Nur SHORT',
+    scan_neutral:'Neutral', scan_watch:'Beobachten', scan_both_dir:'Auf & Ab',
+    scan_gainers_only:'Nur Gewinner ▲', scan_losers_only:'Nur Verlierer ▼', scan_presets:'Voreinstellungen:',
+    scan_top_gainers:'🚀 Größte Gewinner', scan_top_losers:'📉 Größte Verlierer',
+    scan_long_signals:'📈 KI LONG-Signale', scan_short_signals:'📉 KI SHORT-Signale',
+    scan_momentum:'⚡ Momentum (+2%+)', scan_oversold:'🔄 Überverkauft (-2%-)',
+    scan_crypto_only:'₿ Nur Krypto', scan_run:'Scan starten um Ergebnisse zu sehen',
+    scan_ai_btn:'🤖 KI Ergebnisse analysieren',
+    mkt_open:'🟢 Markt Geöffnet', mkt_closed:'🔴 Markt Geschlossen', mkt_info:'NYSE · NASDAQ',
+    mkt_opens:'Öffnet 9:30 Uhr ET',
+    live_data:'LIVE-DATEN', last_updated:'Live-Daten — KI-gestützte Analyse. Zuletzt aktualisiert:',
+  },
+  pt: {
+    nav_overview:'Visão Geral', nav_markets:'Mercados', nav_intelligence:'Análise IA',
+    nav_dashboard:'Painel', nav_watchlist:'Lista de Acompanhamento', nav_positions:'Sinais e Posições',
+    nav_stocks:'Ações EUA', nav_earnings:'Resultados', nav_bonds:'Títulos e Taxas',
+    nav_commodities:'Commodities', nav_forex:'Câmbio', nav_crypto:'Criptomoedas',
+    nav_crisis:'Detector de Crise', nav_company:'Análise de Empresa', nav_macro:'Macroeconomia',
+    nav_liquidity:'Mapa de Liquidez', nav_heatmap:'Mapa de Calor', nav_calendar:'Calendário Econômico',
+    nav_news:'Notícias', nav_scanner:'Scanner de Mercado',
+    btn_export:'📤 Exportar', btn_ai:'🤖 Analisar IA', btn_settings:'⚙️ Configurações', btn_refresh:'⟳ Atualizar',
+    pg_dashboard:'Painel de Inteligência de Mercado', pg_watchlist:'⭐ Lista de Acompanhamento',
+    pg_positions:'🎯 Sinais de Trading IA', pg_stocks:'📈 Ações EUA',
+    pg_earnings:'💰 Resultados e Receitas', pg_bonds:'🏛️ Títulos e Taxas',
+    pg_commodities:'🛢️ Commodities', pg_forex:'💱 Câmbio', pg_crypto:'₿ Criptomoedas',
+    pg_macro:'🌐 Macroeconomia', pg_liquidity:'💧 Mapa de Liquidez',
+    pg_heatmap:'🔥 Mapa de Calor', pg_calendar:'📅 Calendário Econômico',
+    pg_news:'📰 Notícias', pg_crisis:'🚨 Detector de Crise',
+    pg_company:'🏢 Análise de Empresa', pg_scanner:'🔍 Scanner de Mercado',
+    scan_asset:'Tipo de Ativo', scan_signal:'Sinal', scan_minchg:'% Var. Mín', scan_maxchg:'% Var. Máx',
+    scan_dir:'Direção', scan_btn:'🔍 Escanear', scan_all_assets:'Todos os Ativos',
+    scan_stocks:'Ações', scan_crypto:'Cripto', scan_forex:'Câmbio', scan_commodities:'Commodities',
+    scan_all_signals:'Todos os Sinais', scan_long:'Apenas LONG', scan_short:'Apenas SHORT',
+    scan_neutral:'Neutro', scan_watch:'Monitorar', scan_both_dir:'Alta e Baixa',
+    scan_gainers_only:'Apenas Altas ▲', scan_losers_only:'Apenas Baixas ▼', scan_presets:'Predefinições:',
+    scan_top_gainers:'🚀 Maiores Altas', scan_top_losers:'📉 Maiores Baixas',
+    scan_long_signals:'📈 Sinais LONG IA', scan_short_signals:'📉 Sinais SHORT IA',
+    scan_momentum:'⚡ Momentum (+2%+)', scan_oversold:'🔄 Sobrevendido (-2%-)',
+    scan_crypto_only:'₿ Apenas Cripto', scan_run:'Execute uma varredura para ver resultados',
+    scan_ai_btn:'🤖 IA Analisar Resultados',
+    mkt_open:'🟢 Mercado Aberto', mkt_closed:'🔴 Mercado Fechado', mkt_info:'NYSE · NASDAQ',
+    mkt_opens:'Abre 9:30 AM ET',
+    live_data:'DADOS AO VIVO', last_updated:'Dados ao vivo — análise impulsionada por IA. Última atualização:',
+  },
+  ar: {
+    nav_overview:'نظرة عامة', nav_markets:'الأسواق', nav_intelligence:'تحليل الذكاء الاصطناعي',
+    nav_dashboard:'لوحة التحكم', nav_watchlist:'قائمة المراقبة', nav_positions:'الإشارات والمراكز',
+    nav_stocks:'أسهم أمريكية', nav_earnings:'الأرباح', nav_bonds:'السندات والفائدة',
+    nav_commodities:'السلع', nav_forex:'العملات', nav_crypto:'العملات الرقمية',
+    nav_crisis:'كاشف الأزمات', nav_company:'تحليل الشركة', nav_macro:'الاقتصاد الكلي',
+    nav_liquidity:'خريطة السيولة', nav_heatmap:'خريطة الحرارة', nav_calendar:'التقويم الاقتصادي',
+    nav_news:'الأخبار', nav_scanner:'ماسح السوق',
+    btn_export:'📤 تصدير', btn_ai:'🤖 تحليل ذكي', btn_settings:'⚙️ الإعدادات', btn_refresh:'⟳ تحديث',
+    pg_dashboard:'لوحة ذكاء السوق', pg_watchlist:'⭐ قائمة المراقبة',
+    pg_positions:'🎯 إشارات تداول الذكاء الاصطناعي', pg_stocks:'📈 أسهم أمريكية',
+    pg_earnings:'💰 الأرباح والإيرادات', pg_bonds:'🏛️ السندات والفائدة',
+    pg_commodities:'🛢️ السلع', pg_forex:'💱 العملات', pg_crypto:'₿ العملات الرقمية',
+    pg_macro:'🌐 الاقتصاد الكلي', pg_liquidity:'💧 خريطة السيولة',
+    pg_heatmap:'🔥 خريطة الحرارة', pg_calendar:'📅 التقويم الاقتصادي',
+    pg_news:'📰 الأخبار', pg_crisis:'🚨 كاشف الأزمات',
+    pg_company:'🏢 تحليل الشركة', pg_scanner:'🔍 ماسح السوق',
+    scan_asset:'نوع الأصل', scan_signal:'الإشارة', scan_minchg:'% التغيير الأدنى', scan_maxchg:'% التغيير الأقصى',
+    scan_dir:'الاتجاه', scan_btn:'🔍 مسح', scan_all_assets:'جميع الأصول',
+    scan_stocks:'الأسهم', scan_crypto:'الرقمية', scan_forex:'العملات', scan_commodities:'السلع',
+    scan_all_signals:'جميع الإشارات', scan_long:'شراء فقط', scan_short:'بيع فقط',
+    scan_neutral:'محايد', scan_watch:'مراقبة', scan_both_dir:'صعود وهبوط',
+    scan_gainers_only:'الصاعدة فقط ▲', scan_losers_only:'الهابطة فقط ▼', scan_presets:'إعدادات مسبقة:',
+    scan_top_gainers:'🚀 أكبر الصاعدين', scan_top_losers:'📉 أكبر الهابطين',
+    scan_long_signals:'📈 إشارات شراء ذكية', scan_short_signals:'📉 إشارات بيع ذكية',
+    scan_momentum:'⚡ زخم (+2%+)', scan_oversold:'🔄 بيع مفرط (-2%-)',
+    scan_crypto_only:'₿ العملات الرقمية فقط', scan_run:'قم بإجراء مسح لرؤية النتائج',
+    scan_ai_btn:'🤖 تحليل النتائج بالذكاء الاصطناعي',
+    mkt_open:'🟢 السوق مفتوح', mkt_closed:'🔴 السوق مغلق', mkt_info:'NYSE · NASDAQ',
+    mkt_opens:'يفتح 9:30 صباحاً ET',
+    live_data:'بيانات مباشرة', last_updated:'بيانات مباشرة — مدعومة بالذكاء الاصطناعي. آخر تحديث:',
+  },
+  ja: {
+    nav_overview:'概要', nav_markets:'マーケット', nav_intelligence:'AI分析',
+    nav_dashboard:'ダッシュボード', nav_watchlist:'ウォッチリスト', nav_positions:'シグナルとポジション',
+    nav_stocks:'米国株式', nav_earnings:'決算', nav_bonds:'債券と金利',
+    nav_commodities:'コモディティ', nav_forex:'為替', nav_crypto:'暗号資産',
+    nav_crisis:'危機検知', nav_company:'企業分析', nav_macro:'マクロ経済',
+    nav_liquidity:'流動性マップ', nav_heatmap:'ヒートマップ', nav_calendar:'経済カレンダー',
+    nav_news:'ニュース', nav_scanner:'マーケットスキャナー',
+    btn_export:'📤 エクスポート', btn_ai:'🤖 AI分析', btn_settings:'⚙️ 設定', btn_refresh:'⟳ 更新',
+    pg_dashboard:'マーケットインテリジェンス', pg_watchlist:'⭐ ウォッチリスト',
+    pg_positions:'🎯 AIトレードシグナル', pg_stocks:'📈 米国株式',
+    pg_earnings:'💰 決算・売上', pg_bonds:'🏛️ 債券と金利',
+    pg_commodities:'🛢️ コモディティ', pg_forex:'💱 為替', pg_crypto:'₿ 暗号資産',
+    pg_macro:'🌐 マクロ経済', pg_liquidity:'💧 流動性マップ',
+    pg_heatmap:'🔥 ヒートマップ', pg_calendar:'📅 経済カレンダー',
+    pg_news:'📰 ニュース', pg_crisis:'🚨 危機検知',
+    pg_company:'🏢 企業分析', pg_scanner:'🔍 マーケットスキャナー',
+    scan_asset:'アセット種別', scan_signal:'シグナル', scan_minchg:'最小変動%', scan_maxchg:'最大変動%',
+    scan_dir:'方向', scan_btn:'🔍 スキャン', scan_all_assets:'全アセット',
+    scan_stocks:'株式', scan_crypto:'暗号資産', scan_forex:'為替', scan_commodities:'コモディティ',
+    scan_all_signals:'全シグナル', scan_long:'LONGのみ', scan_short:'SHORTのみ',
+    scan_neutral:'中立', scan_watch:'注目', scan_both_dir:'上昇・下落',
+    scan_gainers_only:'上昇のみ ▲', scan_losers_only:'下落のみ ▼', scan_presets:'プリセット:',
+    scan_top_gainers:'🚀 上昇率トップ', scan_top_losers:'📉 下落率トップ',
+    scan_long_signals:'📈 AI LONGシグナル', scan_short_signals:'📉 AI SHORTシグナル',
+    scan_momentum:'⚡ モメンタム (+2%+)', scan_oversold:'🔄 売られ過ぎ (-2%-)',
+    scan_crypto_only:'₿ 暗号資産のみ', scan_run:'スキャンを実行して結果を表示',
+    scan_ai_btn:'🤖 AI結果分析',
+    mkt_open:'🟢 市場オープン', mkt_closed:'🔴 市場クローズ', mkt_info:'NYSE · NASDAQ',
+    mkt_opens:'ET 9:30 オープン',
+    live_data:'ライブデータ', last_updated:'ライブデータ — AI分析搭載。最終更新:',
+  },
+  ko: {
+    nav_overview:'개요', nav_markets:'시장', nav_intelligence:'AI 분석',
+    nav_dashboard:'대시보드', nav_watchlist:'관심 종목', nav_positions:'신호 및 포지션',
+    nav_stocks:'미국 주식', nav_earnings:'실적', nav_bonds:'채권 및 금리',
+    nav_commodities:'원자재', nav_forex:'외환', nav_crypto:'암호화폐',
+    nav_crisis:'위기 감지기', nav_company:'기업 분석', nav_macro:'거시경제',
+    nav_liquidity:'유동성 지도', nav_heatmap:'히트맵', nav_calendar:'경제 캘린더',
+    nav_news:'뉴스', nav_scanner:'마켓 스캐너',
+    btn_export:'📤 내보내기', btn_ai:'🤖 AI 분석', btn_settings:'⚙️ 설정', btn_refresh:'⟳ 새로고침',
+    pg_dashboard:'마켓 인텔리전스 대시보드', pg_watchlist:'⭐ 관심 종목',
+    pg_positions:'🎯 AI 트레이딩 신호', pg_stocks:'📈 미국 주식',
+    pg_earnings:'💰 실적 및 매출', pg_bonds:'🏛️ 채권 및 금리',
+    pg_commodities:'🛢️ 원자재', pg_forex:'💱 외환', pg_crypto:'₿ 암호화폐',
+    pg_macro:'🌐 거시경제', pg_liquidity:'💧 유동성 지도',
+    pg_heatmap:'🔥 히트맵', pg_calendar:'📅 경제 캘린더',
+    pg_news:'📰 뉴스', pg_crisis:'🚨 위기 감지기',
+    pg_company:'🏢 기업 분석', pg_scanner:'🔍 마켓 스캐너',
+    scan_asset:'자산 유형', scan_signal:'신호', scan_minchg:'최소 변동%', scan_maxchg:'최대 변동%',
+    scan_dir:'방향', scan_btn:'🔍 스캔', scan_all_assets:'모든 자산',
+    scan_stocks:'주식', scan_crypto:'암호화폐', scan_forex:'외환', scan_commodities:'원자재',
+    scan_all_signals:'모든 신호', scan_long:'LONG만', scan_short:'SHORT만',
+    scan_neutral:'중립', scan_watch:'관찰', scan_both_dir:'상승 및 하락',
+    scan_gainers_only:'상승만 ▲', scan_losers_only:'하락만 ▼', scan_presets:'프리셋:',
+    scan_top_gainers:'🚀 상승률 상위', scan_top_losers:'📉 하락률 상위',
+    scan_long_signals:'📈 AI LONG 신호', scan_short_signals:'📉 AI SHORT 신호',
+    scan_momentum:'⚡ 모멘텀 (+2%+)', scan_oversold:'🔄 과매도 (-2%-)',
+    scan_crypto_only:'₿ 암호화폐만', scan_run:'스캔 실행으로 결과 보기',
+    scan_ai_btn:'🤖 AI 결과 분석',
+    mkt_open:'🟢 시장 개장', mkt_closed:'🔴 시장 폐장', mkt_info:'NYSE · NASDAQ',
+    mkt_opens:'ET 9:30 개장',
+    live_data:'실시간 데이터', last_updated:'실시간 데이터 — AI 분석 지원. 최종 업데이트:',
+  },
 };;
 
 let currentLang = 'en';
@@ -5094,12 +5358,19 @@ function applyLanguage(lang){
   // Update html lang attribute for proper font rendering
   document.documentElement.lang = lang.replace('_','-');
 
+  // RTL support for Arabic
+  document.documentElement.dir = (lang === 'ar') ? 'rtl' : 'ltr';
+  document.body.style.direction = (lang === 'ar') ? 'rtl' : 'ltr';
+
   // Update body font to prefer Noto Sans variants for non-Latin scripts
   const notoScriptFonts = {
     zh_CN: "'Noto Sans SC', Arial, sans-serif",
     zh_TW: "'Noto Sans TC', Arial, sans-serif",
     th:    "'Noto Sans Thai', Arial, sans-serif",
     dz:    "'Noto Serif Tibetan', Arial, sans-serif",
+    ja:    "'Noto Sans JP', Arial, sans-serif",
+    ko:    "'Noto Sans KR', Arial, sans-serif",
+    ar:    "'Noto Sans Arabic', Arial, sans-serif",
   };
   document.body.style.fontFamily = notoScriptFonts[lang] || "Arial, 'Noto Sans', sans-serif";
 
@@ -5341,9 +5612,17 @@ async function fetchLiveCrypto(){
       MD.ticker = MD.ticker.map(t => t.s==='BTC'
         ? {...t, v:'$'+btc.usd.toLocaleString('en-US',{maximumFractionDigits:0}), c:(btc.usd_24h_change>=0?'+':'')+btc.usd_24h_change.toFixed(2)+'%', up:btc.usd_24h_change>=0}
         : t);
+      // Sync BTC price into watchlist
+      const btcPStr = '$'+btc.usd.toLocaleString('en-US',{maximumFractionDigits:0});
+      const btcChg = (btc.usd_24h_change>=0?'+':'')+btc.usd_24h_change.toFixed(2)+'%';
+      MD.watchlist = MD.watchlist.map(w => w.s==='BTC'
+        ? {...w, p:btcPStr, c:btcChg, up:btc.usd_24h_change>=0}
+        : w);
     }
 
     if(document.getElementById('pg-crypto')?.classList.contains('active')) renderCrypto();
+    if(document.getElementById('pg-watchlist')?.classList.contains('active')) renderWatchlist();
+    if(document.getElementById('pg-positions')?.classList.contains('active')) renderSignals();
     renderTicker();
     updateLiveDataStatus('crypto', true);
     document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString('en-US',{timeZone:'America/New_York',hour12:true})+' ET (Live)';
@@ -5394,7 +5673,18 @@ async function fetchLiveForex(){
       return f;
     });
 
+    // Sync forex rates into watchlist (EUR/USD etc.)
+    MD.watchlist = MD.watchlist.map(w => {
+      const rate = liveRates[w.s];
+      if(!rate) return w;
+      const oldF = parseFloat(w.p), newF = parseFloat(rate);
+      const pct = isNaN(oldF) || oldF===0 ? 0 : ((newF-oldF)/oldF*100);
+      return {...w, p:rate, c:(pct>=0?'+':'')+pct.toFixed(2)+'%', up:pct>=0};
+    });
+
     if(document.getElementById('pg-forex')?.classList.contains('active')) renderForex();
+    if(document.getElementById('pg-watchlist')?.classList.contains('active')) renderWatchlist();
+    if(document.getElementById('pg-positions')?.classList.contains('active')) renderSignals();
     updateLiveDataStatus('forex', true);
   } catch(e){
     console.warn('Forex live data unavailable:', e.message);
@@ -5437,36 +5727,22 @@ async function fetchLiveFearGreed(){
 }
 
 async function fetchLiveStocks(){
-  // Yahoo Finance v7 via multiple CORS proxies — no API key required
+  // Yahoo Finance v7 via Netlify Function (server-side, no CORS issues)
   const symbols = [
     '^GSPC','^DJI','^IXIC','^RUT','^VIX',  // indices
     'AAPL','MSFT','NVDA','AMZN','GOOGL','META','BRK-B','LLY','XOM','JPM',
     'AMD','TSLA','WFC','PFE','CVX','T','V','INTC','CRM','NFLX',  // stocks
     'GC=F','CL=F','BZ=F','SI=F','HG=F','NG=F','ZC=F','ZW=F',  // commodities
-    '^IRX','^TNX','^TYX','DX-Y.NYB'  // bonds (3M,10Y,30Y) + DXY
-  ];
-  const fields = 'regularMarketPrice,regularMarketChangePercent,regularMarketChange,regularMarketPreviousClose,shortName';
-  const yfBase = `symbols=${symbols.join(',')}&fields=${fields}&formatted=false`;
-  const yfUrls = [
-    `https://query2.finance.yahoo.com/v7/finance/quote?${yfBase}`,
-    `https://query1.finance.yahoo.com/v7/finance/quote?${yfBase}`,
-  ];
-  const proxyFns = [
-    url => `https://corsproxy.io/?${encodeURIComponent(url)}`,
-    url => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
-    url => `https://thingproxy.freeboard.io/fetch/${url}`,
-    url => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
+    '^IRX','^TNX','^TYX','DX-Y.NYB',  // bonds (3M,10Y,30Y) + DXY
+    'SPY','QQQ','GLD','TLT','ADBE','GS','BAC','COP',  // watchlist + heat map extras
+    'XLK','XLV','XLF','XLY','XLI','XLRE','XLE','XLU','XLB','XLC'  // sector ETFs for heat map
   ];
 
-  // fetchWithTimeout helper
   async function tryFetch(url){
     const ctrl = new AbortController();
-    const t = setTimeout(()=>ctrl.abort(), 9000);
+    const t = setTimeout(()=>ctrl.abort(), 10000);
     try {
-      const res = await fetch(url, {
-        headers:{'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'},
-        signal: ctrl.signal
-      });
+      const res = await fetch(url, { signal: ctrl.signal });
       clearTimeout(t);
       if(!res.ok) throw new Error('HTTP '+res.status);
       return await res.json();
@@ -5474,18 +5750,35 @@ async function fetchLiveStocks(){
   }
 
   let results = null;
-  outer: for(const yfUrl of yfUrls){
+
+  // 1st — Netlify Function (reliable, server-side)
+  try {
+    const data = await tryFetch(`/api/quotes?symbols=${symbols.join(',')}`);
+    const r = data?.quoteResponse?.result;
+    if(r && r.length > 3) results = r;
+  } catch(e){ console.warn('Netlify quotes fn failed:', e.message); }
+
+  // 2nd fallback — CORS proxies if function unavailable (local dev)
+  if(!results){
+    const fields = 'regularMarketPrice,regularMarketChangePercent,regularMarketChange,regularMarketPreviousClose,shortName';
+    const yfBase = `symbols=${symbols.join(',')}&fields=${fields}&formatted=false`;
+    const proxyFns = [
+      u => `https://corsproxy.io/?${encodeURIComponent(u)}`,
+      u => `https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,
+      u => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(u)}`,
+    ];
+    const yfUrl = `https://query2.finance.yahoo.com/v7/finance/quote?${yfBase}`;
     for(const mkProxy of proxyFns){
       try {
         const data = await tryFetch(mkProxy(yfUrl));
         const r = data?.quoteResponse?.result;
-        if(r && r.length > 3){ results = r; break outer; }
+        if(r && r.length > 3){ results = r; break; }
       } catch(e){ /* try next */ }
     }
   }
 
   if(!results || !results.length){
-    console.warn('All Yahoo Finance proxies failed');
+    console.warn('All Yahoo Finance sources failed');
     updateLiveDataStatus('stocks', false);
     return;
   }
@@ -5611,6 +5904,45 @@ async function fetchLiveStocks(){
       });
     }
 
+    // ── Update Watchlist with live prices ──
+    const wlSymMap = {'SPY':'SPY','QQQ':'QQQ','NVDA':'NVDA','AAPL':'AAPL','META':'META','GLD':'GLD','TLT':'TLT','XOM':'XOM'};
+    MD.watchlist = MD.watchlist.map(w => {
+      const yfSym = wlSymMap[w.s];
+      if(!yfSym || !q[yfSym]) return w;
+      const r = q[yfSym]; const p = getPrice(r);
+      if(isNaN(p)) return w;
+      return {...w, p:'$'+p.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}), c:fmtPct(r), up:isUp(r)};
+    });
+
+    // ── Update Heat Map stocks (% change only) ──
+    const heatSymMap = {
+      'NVDA':'NVDA','META':'META','AMD':'AMD','TSLA':'TSLA','MSFT':'MSFT','LLY':'LLY',
+      'GS':'GS','AMZN':'AMZN','GOOGL':'GOOGL','BAC':'BAC','AAPL':'AAPL','JPM':'JPM',
+      'V':'V','ADBE':'ADBE','T':'T','INTC':'INTC','WFC':'WFC','XOM':'XOM','PFE':'PFE',
+      'CVX':'CVX','COP':'COP','Gold':'GC=F','Silver':'SI=F','Copper':'HG=F','WTI':'CL=F','NG':'NG=F','Wheat':'ZW=F'
+    };
+    MD.heatStocks = MD.heatStocks.map(h => {
+      const yfSym = heatSymMap[h.s];
+      if(!yfSym || !q[yfSym]) return h;
+      const r = q[yfSym]; const pct = getChgPct(r);
+      if(isNaN(pct)) return h;
+      return {...h, c: parseFloat(pct.toFixed(2))};
+    });
+
+    // ── Update Heat Map sectors from ETFs ──
+    const sectorEtfMap = {
+      'Technology':'XLK','Healthcare':'XLV','Financials':'XLF','Consumer Disc.':'XLY',
+      'Industrials':'XLI','Real Estate':'XLRE','Energy':'XLE','Utilities':'XLU',
+      'Materials':'XLB','Comm. Services':'XLC'
+    };
+    MD.heatSectors = MD.heatSectors.map(s => {
+      const etf = sectorEtfMap[s.n];
+      if(!etf || !q[etf]) return s;
+      const r = q[etf]; const pct = getChgPct(r);
+      if(isNaN(pct)) return s;
+      return {...s, c: parseFloat(pct.toFixed(2))};
+    });
+
     // ── Re-render all affected components ──
     renderTicker();
     renderIndices();
@@ -5620,6 +5952,8 @@ async function fetchLiveStocks(){
     if(document.getElementById('pg-stocks')?.classList.contains('active')) renderStocks?.();
     if(document.getElementById('pg-commodities')?.classList.contains('active')) renderCommodities?.();
     if(document.getElementById('pg-bonds')?.classList.contains('active')) renderBonds?.();
+    if(document.getElementById('pg-watchlist')?.classList.contains('active')) renderWatchlist();
+    if(document.getElementById('pg-positions')?.classList.contains('active')) renderSignals();
 
     updateLiveDataStatus('stocks', true);
     document.getElementById('lastUpdate').textContent =
@@ -5633,8 +5967,17 @@ async function fetchLiveStocks(){
   }
 }
 
-/* ── Shared proxy helper for macro/earnings fetches ── */
+/* ── Shared fetch helper (direct, no proxy needed for BLS/FRED) ── */
 async function _proxyFetch(url, timeoutMs=9000){
+  // Try direct fetch first (BLS + FRED support CORS)
+  try{
+    const ctrl = new AbortController();
+    const t = setTimeout(()=>ctrl.abort(), timeoutMs);
+    const res = await fetch(url, {signal:ctrl.signal});
+    clearTimeout(t);
+    if(res.ok) return await res.json();
+  }catch(e){ /* fall through */ }
+  // Fallback proxies
   const proxyFns = [
     u => `https://corsproxy.io/?${encodeURIComponent(u)}`,
     u => `https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,
@@ -5653,14 +5996,31 @@ async function _proxyFetch(url, timeoutMs=9000){
 }
 
 /* ══════════════════════════════════════════════════
-   LIVE MACRO — BLS + FRED (no API key required)
+   LIVE MACRO — BLS + FRED via Netlify Function
 ══════════════════════════════════════════════════ */
 async function fetchLiveMacro(){
+  // Try Netlify function first (bundles all macro fetches server-side)
+  let macroBundle = null;
+  try {
+    const ctrl = new AbortController();
+    const t = setTimeout(()=>ctrl.abort(), 12000);
+    const res = await fetch('/api/macro', {signal:ctrl.signal});
+    clearTimeout(t);
+    if(res.ok) macroBundle = await res.json();
+  } catch(e){ console.warn('Netlify macro fn failed:', e.message); }
+
   const blsFetch = async (sid) => {
+    if(macroBundle?.bls){
+      const series = macroBundle.bls?.Results?.series?.find(s=>s.seriesID===sid);
+      return series?.data || [];
+    }
     const d = await _proxyFetch(`https://api.bls.gov/publicAPI/v1/timeseries/data/${sid}`);
     return d?.Results?.series?.[0]?.data || [];
   };
   const fredFetch = async (sid) => {
+    if(macroBundle?.[sid]){
+      return (macroBundle[sid]?.observations||[]).filter(o=>o.value!=='.'&&o.value!=='');
+    }
     const d = await _proxyFetch(`https://fred.stlouisfed.org/graph/fredgraph.json?id=${sid}`);
     return (d?.observations||[]).filter(o=>o.value!=='.'&&o.value!=='');
   };
@@ -5937,13 +6297,14 @@ function renderCrisisStrip(){
 
   // Map indicator ids to strip meter elements (by title attribute)
   const titleMap = {
-    yield_curve:  'Yield Curve Inversion',
-    credit_stress:'Credit Stress',
-    volatility:   'Volatility',
-    inflation:    'Inflation Pressure',
-    banking:      'Banking System Stress',
-    debt:         'Debt Sustainability',
-    liquidity:    'Liquidity Conditions',
+    yield_curve:    'Yield Curve Inversion',
+    credit_stress:  'Credit Stress',
+    volatility:     'Volatility',
+    inflation:      'Inflation Pressure',
+    banking:        'Banking System Stress',
+    debt:           'Debt Sustainability',
+    liquidity:      'Liquidity Conditions',
+    private_credit: 'Private Credit Risk',
   };
 
   CRISIS.indicators.forEach(ind => {
