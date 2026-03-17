@@ -1544,7 +1544,7 @@ body::before{
   <select id="langSelect" onchange="applyLanguage(this.value)"
     style="background:var(--bg3);border:1px solid var(--border2);color:var(--text);padding:4px 8px;border-radius:7px;font-family:Arial,'Noto Sans',sans-serif;font-size:11px;cursor:pointer;outline:none;max-width:140px;">
     <option value="en">🇺🇸 English</option>
-    <option value="es">🇪🇸 Español</option>
+    <option value="de">🇩🇪 Deutsch</option>
     <option value="ar_ae">🇦🇪 الإمارات</option>
     <option value="ar_sa">🇸🇦 السعودية</option>
     <option value="ar_kw">🇰🇼 الكويت</option>
@@ -2682,7 +2682,7 @@ async function callClaude(prompt, targetEl, systemMsg='') {
 
   // Language instruction for AI responses
   const langNames = {
-    en:'English', es:'Spanish',
+    en:'English', de:'German',
     ar:'Arabic', ar_ae:'Arabic (UAE)', ar_sa:'Arabic (Saudi Arabia)', ar_kw:'Arabic (Kuwait)', ar_qa:'Arabic (Qatar)',
     ja:'Japanese', ko:'Korean',
     zh_CN:'Simplified Chinese', zh_TW:'Traditional Chinese',
@@ -4399,17 +4399,17 @@ const CRISIS_TEXT = {
     geopolitical:{name:'지정학적 위험',desc:'다중 활성 위험 벡터: 무역 전쟁, 지역 분쟁, 미중 기술 디커플링.',signals:['미중 무역 전쟁 확대 — 관세 및 기술 수출 통제 확대','러시아-우크라이나 분쟁 지속 — 유럽 에너지 안보 위험','중동 긴장 — 홍해 해운 차질 부분 해소','대만해협 위험 상승 — 반도체 공급망 집중 위험'],hist:'1973년 석유 금수 조치가 스태그플레이션 촉발. 2026년 지정학적 위험은 더 다면적.'},
     private_credit:{name:'프라이빗 크레딧 위험',desc:'약 1.7조 달러 프라이빗 크레딧 시장의 유동성·평가 위험, 규제 투명성 부족.',signals:['시장 규모 약 1.7조 달러 — 2015년 이후 5배 성장, 불투명한 규제','만기 벽: 약 5000억 달러 이상의 대출이 2025~2027년 만기','부도율 상승 — 고금리가 차입자 커버리지 비율 잠식','신규 대출의 80% 이상이 코버넌트-라이트 — 대출자 보호 취약'],hist:'2008년 GFC 당시 프라이빗 크레딧은 거의 없었음. 제로금리 시대 2015년 이후 급성장이 고금리 환경에서 검증되지 않은 스트레스 유발.'},
   },
-  es:{
-    yield_curve:{name:'Inversión de la Curva de Rendimientos',desc:'Diferencial entre bonos del Tesoro a 3M y 10A — indicador clave de recesión.',signals:['Obteniendo datos de rendimiento en vivo desde FRED / Yahoo Finance...','Tasa de acierto histórica: 7/8 recesiones precedidas por inversión','La curva invertida precede históricamente a la recesión 12–18 meses','Vigilar re-empinamiento — suele señalar inicio de recesión'],hist:'2006-2007: Curva invertida 18 meses antes de la GFC. 2019: breve inversión antes del COVID.'},
-    credit_stress:{name:'Estrés del Mercado Crediticio',desc:'Los spreads de crédito de alto rendimiento e investment grade señalan estrés en los mercados de deuda corporativa.',signals:['Spreads HY — vigilar movimiento sostenido sobre 400bps (señal de crisis)','Spreads IG — rango normal 80–120bps; elevados si superan 150bps','Bonos CCC — en dificultades si spreads superan 900bps','Estándares bancarios (encuesta SLOOS) — tendencia de ajuste presente'],hist:'Pre-GFC 2007: spreads HY ~250bps antes de dispararse a 1800bps en 2008.'},
-    volatility:{name:'Volatilidad del Mercado (VIX)',desc:'VIX mide la volatilidad implícita a 30 días de las opciones del S&P 500 — el "indicador del miedo".',signals:['Obteniendo VIX en vivo desde Yahoo Finance...','VIX bajo 15 = zona de complacencia — precede correcciones históricamente','VIX sobre 30 = pánico; sobre 50 = crisis sistémica','VVIX elevado — riesgo de pico de vol si ocurre shock macroeconómico'],hist:'VIX bajo 15 precedió la caída del COVID en 2020. VIX llegó a 89 durante la GFC 2008.'},
-    inflation:{name:'Presión Inflacionaria',desc:'CPI y Core PCE respecto al objetivo del 2% de la Fed — la inflación persistente prolonga las altas tasas.',signals:['Obteniendo CPI en vivo desde BLS.gov...','Core PCE — obteniendo desde FRED...','Componente de alquiler/vivienda — presión al alza rezagada pero persistente','Puntos de equilibrio de inflación a 5A — indicador de expectativas del mercado'],hist:'Estanflación de los 70s: CPI máximo 14.8%. Pico 2022: 9.1%. Actual: normalizándose.'},
-    banking:{name:'Estrés del Sistema Bancario',desc:'El sistema bancario estable tras los shocks SVB/CS de 2023. El inmueble comercial sigue siendo riesgo clave.',signals:['Programa BTFP de la Fed finalizado — apoyo de emergencia retirado','Inmueble comercial: ~$1.5T en vencimientos 2024–2027 — riesgo refinanciación','Reservas bancarias sobre $3T — amortiguador de liquidez adecuado','Exposición bancaria regional a CRE: tasas de vacantes de oficinas en máximos históricos'],hist:'GFC 2008: 25 quiebras bancarias. 2023: 3 (Silicon Valley Bank, Signature, First Republic).'},
-    debt:{name:'Riesgo de Deuda Soberana',desc:'Deuda federal de EE.UU. ~$36T en 2026. Pago de intereses ya es la mayor partida del presupuesto.',signals:['Deuda nacional: ~$36 billones — sigue creciendo estructuralmente','Gasto anual en intereses: ~$1.1T — supera gasto en defensa','Déficit: ~$1.8T+ anual — estructural, no cíclico','Fitch (AA+) y perspectiva negativa de Moody\'s — presión sobre crédito de EE.UU.'],hist:'La deuda/PIB de Japón es 260% pero mantenida internamente. La deuda de EE.UU. es riesgo de la moneda de reserva global.'},
-    liquidity:{name:'Condiciones de Liquidez',desc:'Fed pausó QT en 2024. Ritmo de reducción del balance desacelerado. Liquidez en dólares amplia.',signals:['Ritmo QT reducido — drenaje de reservas desacelerado significativamente','Mercado repo estable — tasas a un día cerca del objetivo de fondos federales','Líneas de swap en dólares activas — demanda internacional de USD satisfecha','Fondos monetarios ~$7T — máximo histórico (abundante pólvora seca)'],hist:'Crisis repo 2019: tasas overnight hasta 10%. Reservas actuales siguen siendo amplias.'},
-    housing:{name:'Estrés del Mercado Inmobiliario',desc:'Accesibilidad en mínimos históricos pese a modestas bajadas de tipos. Ventas de viviendas existentes congeladas.',signals:['Hipoteca a 30A ~6.5–7% — accesibilidad en mínimos de varias décadas','Índice de accesibilidad vivienda cerca de mínimos de 40 años','Ventas existentes deprimidas — "efecto lock-in" de tasas bajas 2020-21','Precios de vivienda elevados — sin corrección generalizada hasta ahora'],hist:'Colapso inmobiliario 2008: precios cayeron +30% a nivel nacional con impagos masivos.'},
-    geopolitical:{name:'Riesgo Geopolítico',desc:'Múltiples vectores de riesgo activos: guerras comerciales, conflictos regionales, desacoplamiento tecnológico EE.UU.-China.',signals:['Escalada guerra comercial EE.UU.-China — aranceles y controles de exportación ampliándose','Conflicto Rusia-Ucrania en curso — riesgo seguridad energética europea','Tensiones en Oriente Medio — perturbaciones Mar Rojo parcialmente resueltas','Riesgo estrecho de Taiwán elevado — concentración cadena suministro semiconductores'],hist:'Embargo petrolero 1973 desencadenó estanflación. El riesgo geopolítico de 2026 es más multivectorial.'},
-    private_credit:{name:'Riesgo de Crédito Privado',desc:'El mercado de crédito privado de ~$1.7T presenta riesgos de liquidez y valoración con escasa transparencia regulatoria.',signals:['Tamaño del mercado ~$1.7T — creció 5× desde 2015, en gran parte no regulado','Muro de vencimientos: ~$500B+ en préstamos privados venciendo 2025–2027','Tasas de impago en aumento — tipos altos erosionan ratios de cobertura','+80% de nuevos préstamos son covenant-lite — protecciones mínimas para prestamistas'],hist:'El crédito privado apenas existía en la GFC 2008. El rápido crecimiento post-2015 en entorno de tipos cero crea dinámicas de estrés no probadas con tipos altos.'},
+  de:{
+    yield_curve:{name:'Invertierte Zinsstrukturkurve',desc:'Renditedifferenz zwischen 3-Monats- und 10-Jahres-US-Anleihen — wichtiger Rezessionsindikator.',signals:['Rufe Live-Renditedaten von FRED / Yahoo Finance ab...','Historische Trefferquote: 7 von 8 Rezessionen wurden durch Inversion angekündigt','Invertierte Kurve geht Rezessionen historisch um 12–18 Monate voraus','Auf Re-Steilung achten — signalisiert häufig den Beginn einer Rezession'],hist:'2006-2007: 18 Monate Inversion vor der globalen Finanzkrise. 2019: kurze Inversion vor COVID.'},
+    credit_stress:{name:'Kreditmarktstress',desc:'High-Yield- und Investment-Grade-Kreditspreads signalisieren Stress an den Unternehmensanleihemärkten.',signals:['HY-Spreads — anhaltende Bewegung über 400bps ist Krisensignal','IG-Spreads — Normalbereich 80–120bps; erhöht ab 150bps','CCC-Anleihen — notleidend bei Spreads über 900bps','Bankkreditvergabestandards (SLOOS) — Verschärfungstrend vorhanden'],hist:'Vor der Finanzkrise 2007: HY-Spreads ~250bps, stieg 2008 auf 1800bps.'},
+    volatility:{name:'Marktvolatilität (VIX)',desc:'VIX misst die 30-Tage-implizite Volatilität der S&P-500-Optionen — der „Angstindikator".',signals:['Rufe Live-VIX von Yahoo Finance ab...','VIX unter 15 = Selbstgefälligkeitszone — historisch Vorbote von Korrekturen','VIX über 30 = Marktpanik; über 50 = systemische Krise','VVIX erhöht — Volatilitätssprung-Risiko bei Makroschock'],hist:'VIX unter 15 vor dem COVID-Crash 2020. VIX erreichte 89 während der Finanzkrise 2008.'},
+    inflation:{name:'Inflationsdruck',desc:'CPI und Kern-PCE relativ zum Fed-Ziel von 2% — hartnäckige Inflation verlängert den Hochzinszyklus.',signals:['Rufe Live-CPI von BLS.gov ab...','Kern-PCE — wird von FRED abgerufen...','Wohnkosten-Komponente — verzögert, aber anhaltender Aufwärtsdruck','5-Jahres-Inflations-Breakevens — Marktindikator für Inflationserwartungen'],hist:'Stagflation der 1970er: CPI-Höchststand 14,8%. Höchststand 2022: 9,1%. Aktuell: normalisiert sich.'},
+    banking:{name:'Bankensystemstress',desc:'Bankensystem nach den SVB/CS-Schocks 2023 weitgehend stabil. Gewerbeimmobilien bleiben Hauptrisiko.',signals:['Fed-BTFP-Programm beendet — Notfall-Stützung entfernt','Gewerbeimmobilien: ~1,5 Bio. $ Fälligkeiten 2024–2027 — Refinanzierungsrisiko','Bankreserven über 3 Bio. $ — ausreichender Liquiditätspuffer','Regionale Banken mit CRE-Exposure: Büroleerstandsquoten auf historischem Hoch'],hist:'Finanzkrise 2008: 25 Bankpleiten. 2023: 3 Banken (Silicon Valley Bank, Signature, First Republic).'},
+    debt:{name:'Staatsverschuldungsrisiko',desc:'US-Bundesschuld ~36 Bio. $ im Jahr 2026. Zinszahlungen sind inzwischen der größte Haushaltsposten.',signals:['US-Staatsschulden: ~36 Billionen $ — strukturell weiter steigend','Jährliche Zinslast: ~1,1 Bio. $ — übersteigt Verteidigungshaushalt','Defizit: ~1,8 Bio. $+ jährlich — strukturell, nicht konjunkturell','Fitch (AA+) und Moodys negativer Ausblick — US-Kreditwürdigkeit unter Druck'],hist:'Japans Schulden/BIP beträgt 260%, wird aber hauptsächlich im Inland gehalten. US-Schulden sind ein Risiko für die globale Reservewährung.'},
+    liquidity:{name:'Liquiditätsbedingungen',desc:'Fed pausierte QT 2024. Tempo des Bilanzabbaus verlangsamt. Dollar-Liquidität reichlich vorhanden.',signals:['QT-Tempo reduziert — Reserveabbau deutlich verlangsamt','Repo-Markt stabil — Übernachtzinsen nahe Fed-Zielrate','Dollar-Swaplinien aktiv — internationale USD-Nachfrage gedeckt','Geldmarktfonds ~7 Bio. $ — Rekordhoch (erhebliches Trockenpulver)'],hist:'Repo-Krise 2019: Übernachtzinsen sprangen auf 10%. Aktuelle Reserven bleiben reichlich.'},
+    housing:{name:'Immobilienmarktstress',desc:'Erschwinglichkeit auf historischem Tiefstand trotz moderater Zinssenkungen. Umsatz bestehender Häuser eingefroren.',signals:['30-jährige Hypothek ~6,5–7% — Erschwinglichkeit auf Jahrzehnttief','Wohnkostenindex nahe 40-Jahres-Tief','Umsatz bestehender Häuser gedrückt — „Lock-in-Effekt" durch Niedrigzinsen 2020-21','Hauspreise weiterhin erhöht — bisher keine breite Preiskorrektur'],hist:'Immobilienkrise 2008: Preise fielen national um über 30% mit weitverbreiteten Hypothekenausfällen.'},
+    geopolitical:{name:'Geopolitisches Risiko',desc:'Mehrere aktive Risikovektoren: Handelskriege, regionale Konflikte, US-China-Technologieentkopplung.',signals:['Eskalation US-China-Handelskrieg — Zölle und Technologieexportkontrollen ausgeweitet','Russland-Ukraine-Konflikt andauernd — europäisches Energiesicherheitsrisiko','Nahost-Spannungen — Rotes-Meer-Schifffahrtsstörungen teilweise gelöst','Taiwan-Straße-Risiko erhöht — Halbleiterlieferketten-Konzentration'],hist:'Ölembargo 1973 löste Stagflation aus. Geopolitisches Risiko 2026 ist vielschichtiger.'},
+    private_credit:{name:'Privatkredit-Risiko',desc:'Der ~1,7-Bio.-$-Privatkredit-Markt birgt Liquiditäts- und Bewertungsrisiken bei geringer regulatorischer Transparenz.',signals:['Marktgröße ~1,7 Bio. $ — seit 2015 5-faches Wachstum, größtenteils unreguliert','Fälligkeitswand: ~500 Mrd. $+ private Kredite fällig 2025–2027','Ausfallraten steigen — Hochzinsumfeld erodiert Zinsdeckungsquoten der Schuldner','80%+ der neuen Privatkredite sind Covenant-lite — minimaler Gläubigerschutz'],hist:'Privatkredit existierte kaum bei der Finanzkrise 2008. Schnelles Wachstum nach 2015 im Nullzinsumfeld schafft unerprobte Stressdynamiken bei höheren Zinsen.'},
   },
   ar_ae:{
     yield_curve:{name:'انعكاس منحنى العائد',desc:'الفارق بين سندات الخزانة 3 أشهر و10 سنوات — مؤشر ركود رئيسي.',signals:['جاري جلب بيانات العائد المباشرة من FRED / Yahoo Finance...','معدل الدقة التاريخي: 7 من 8 ركودات سبقها انعكاس','الانعكاس يسبق الركود تاريخياً بـ 12–18 شهراً','مراقبة إعادة التحدب — غالباً إشارة لبدء الركود'],hist:'2006-2007: انعكاس لمدة 18 شهراً قبل الأزمة المالية العالمية. 2019: انعكاس قصير قبل كوفيد.'},
@@ -4439,10 +4439,10 @@ function renderCrisisCards(){
   if(!el) return;
   const lang = currentLang || 'en';
   const T = TRANSLATIONS[lang] || TRANSLATIONS.en;
-  const badgeHigh   = {'en':'HIGH RISK','zh_CN':'高风险','zh_TW':'高風險','ja':'高リスク','ko':'고위험','es':'ALTO RIESGO','ar_ae':'خطر مرتفع','ar_sa':'خطر مرتفع','ar_kw':'خطر مرتفع','ar_qa':'خطر مرتفع'}[lang] || 'HIGH RISK';
-  const badgeMed    = {'en':'CAUTION',  'zh_CN':'警告',   'zh_TW':'警告',  'ja':'注意',    'ko':'주의',   'es':'PRECAUCIÓN','ar_ae':'تحذير',    'ar_sa':'تحذير',    'ar_kw':'تحذير',    'ar_qa':'تحذير'}[lang]   || 'CAUTION';
-  const badgeLow    = {'en':'LOW RISK', 'zh_CN':'低风险','zh_TW':'低風險','ja':'低リスク','ko':'저위험','es':'RIESGO BAJO','ar_ae':'خطر منخفض','ar_sa':'خطر منخفض','ar_kw':'خطر منخفض','ar_qa':'خطر منخفض'}[lang]   || 'LOW RISK';
-  const riskScore   = {'en':'Risk Score','zh_CN':'风险评分','zh_TW':'風險評分','ja':'リスクスコア','ko':'위험 점수','es':'Puntuación de Riesgo','ar_ae':'درجة المخاطر','ar_sa':'درجة المخاطر','ar_kw':'درجة المخاطر','ar_qa':'درجة المخاطر'}[lang] || 'Risk Score';
+  const badgeHigh   = {'en':'HIGH RISK','zh_CN':'高风险','zh_TW':'高風險','ja':'高リスク','ko':'고위험','de':'HOHES RISIKO','ar_ae':'خطر مرتفع','ar_sa':'خطر مرتفع','ar_kw':'خطر مرتفع','ar_qa':'خطر مرتفع'}[lang] || 'HIGH RISK';
+  const badgeMed    = {'en':'CAUTION',  'zh_CN':'警告',   'zh_TW':'警告',  'ja':'注意',    'ko':'주의',   'de':'VORSICHT',    'ar_ae':'تحذير',    'ar_sa':'تحذير',    'ar_kw':'تحذير',    'ar_qa':'تحذير'}[lang]   || 'CAUTION';
+  const badgeLow    = {'en':'LOW RISK', 'zh_CN':'低风险','zh_TW':'低風險','ja':'低リスク','ko':'저위험','de':'GERINGES RISIKO','ar_ae':'خطر منخفض','ar_sa':'خطر منخفض','ar_kw':'خطر منخفض','ar_qa':'خطر منخفض'}[lang]   || 'LOW RISK';
+  const riskScore   = {'en':'Risk Score','zh_CN':'风险评分','zh_TW':'風險評分','ja':'リスクスコア','ko':'위험 점수','de':'Risikobewertung','ar_ae':'درجة المخاطر','ar_sa':'درجة المخاطر','ar_kw':'درجة المخاطر','ar_qa':'درجة المخاطر'}[lang] || 'Risk Score';
 
   el.innerHTML = CRISIS.indicators.map(c=>{
     const cls = c.level==='high'?'danger-card':c.level==='med'?'caution-card':'safe-card';
@@ -5379,37 +5379,37 @@ const TRANSLATIONS = {
     mkt_opens:'ET 9:30 AM ལ་ཕཡེ་མི་བཡེད་',
     live_data:'ཏཁད་ཀར་གཞི་གནས་', last_updated:'ཏཁད་ཀར་གཞི་གནས་ — AI རགཡུད་བཞོས་ཉིན་ཏང་ཤའད་འབཡོར་ཡོད་:',
   },
-  es: {
-    nav_overview:'Resumen', nav_markets:'Mercados', nav_intelligence:'Análisis IA',
-    nav_dashboard:'Panel', nav_watchlist:'Seguimiento', nav_positions:'Señales y Posiciones',
-    nav_stocks:'Acciones EE.UU.', nav_earnings:'Resultados', nav_bonds:'Bonos y Tasas',
-    nav_commodities:'Materias Primas', nav_forex:'Divisas', nav_crypto:'Criptomonedas',
-    nav_crisis:'Detector de Crisis', nav_company:'Análisis de Empresa', nav_macro:'Economía Macro',
-    nav_liquidity:'Mapa de Liquidez', nav_heatmap:'Mapa de Calor', nav_calendar:'Calendario Económico',
-    nav_news:'Noticias', nav_scanner:'Escáner de Mercado',
-    btn_export:'📤 Exportar', btn_ai:'🤖 Analizar IA', btn_settings:'⚙️ Configuración', btn_refresh:'⟳ Actualizar',
-    pg_dashboard:'Panel de Inteligencia de Mercado', pg_watchlist:'⭐ Lista de Seguimiento',
-    pg_positions:'🎯 Señales de Trading IA', pg_stocks:'📈 Acciones EE.UU.',
-    pg_earnings:'💰 Resultados e Ingresos', pg_bonds:'🏛️ Bonos y Tasas de Interés',
-    pg_commodities:'🛢️ Materias Primas', pg_forex:'💱 Divisas', pg_crypto:'₿ Criptomonedas',
-    pg_macro:'🌐 Economía Macro', pg_liquidity:'💧 Mapa de Liquidez',
-    pg_heatmap:'🔥 Mapa de Calor', pg_calendar:'📅 Calendario Económico',
-    pg_news:'📰 Noticias', pg_crisis:'🚨 Detector de Crisis',
-    pg_company:'🏢 Análisis de Empresa', pg_scanner:'🔍 Escáner de Mercado',
-    scan_asset:'Tipo de Activo', scan_signal:'Señal', scan_minchg:'% Cambio Mín', scan_maxchg:'% Cambio Máx',
-    scan_dir:'Dirección', scan_btn:'🔍 Escanear', scan_all_assets:'Todos los Activos',
-    scan_stocks:'Acciones', scan_crypto:'Cripto', scan_forex:'Divisas', scan_commodities:'Materias Primas',
-    scan_all_signals:'Todas las Señales', scan_long:'Solo LONG', scan_short:'Solo SHORT',
-    scan_neutral:'Neutral', scan_watch:'Vigilar', scan_both_dir:'Sube y Baja',
-    scan_gainers_only:'Solo Subidas ▲', scan_losers_only:'Solo Bajadas ▼', scan_presets:'Presets:',
-    scan_top_gainers:'🚀 Mayores Subidas', scan_top_losers:'📉 Mayores Bajadas',
-    scan_long_signals:'📈 Señales LONG IA', scan_short_signals:'📉 Señales SHORT IA',
-    scan_momentum:'⚡ Momentum (+2%+)', scan_oversold:'🔄 Sobrevendido (-2%-)',
-    scan_crypto_only:'₿ Solo Cripto', scan_run:'Ejecuta un escaneo para ver resultados',
-    scan_ai_btn:'🤖 IA Analizar Resultados',
-    mkt_open:'🟢 Mercado Abierto', mkt_closed:'🔴 Mercado Cerrado', mkt_info:'NYSE · NASDAQ',
-    mkt_opens:'Abre 9:30 AM ET',
-    live_data:'DATOS EN VIVO', last_updated:'Datos en vivo — análisis impulsado por IA. Última actualización:',
+  de: {
+    nav_overview:'Übersicht', nav_markets:'Märkte', nav_intelligence:'KI-Analyse',
+    nav_dashboard:'Dashboard', nav_watchlist:'Watchlist', nav_positions:'Signale & Positionen',
+    nav_stocks:'US-Aktien', nav_earnings:'Quartalsergebnisse', nav_bonds:'Anleihen & Zinsen',
+    nav_commodities:'Rohstoffe', nav_forex:'Devisen', nav_crypto:'Krypto',
+    nav_crisis:'Krisen-Detektor', nav_company:'Unternehmensanalyse', nav_macro:'Makroökonomie',
+    nav_liquidity:'Liquiditätskarte', nav_heatmap:'Heatmap', nav_calendar:'Wirtschaftskalender',
+    nav_news:'Nachrichten', nav_scanner:'Markt-Scanner',
+    btn_export:'📤 Exportieren', btn_ai:'🤖 KI-Analyse', btn_settings:'⚙️ Einstellungen', btn_refresh:'⟳ Aktualisieren',
+    pg_dashboard:'Markt-Intelligenz Dashboard', pg_watchlist:'⭐ Watchlist',
+    pg_positions:'🎯 KI-Handelssignale', pg_stocks:'📈 US-Aktien',
+    pg_earnings:'💰 Quartalsergebnisse', pg_bonds:'🏛️ Anleihen & Zinsen',
+    pg_commodities:'🛢️ Rohstoffe', pg_forex:'💱 Devisen', pg_crypto:'₿ Krypto',
+    pg_macro:'🌐 Makroökonomie', pg_liquidity:'💧 Liquiditätskarte',
+    pg_heatmap:'🔥 Heatmap', pg_calendar:'📅 Wirtschaftskalender',
+    pg_news:'📰 Nachrichten', pg_crisis:'🚨 Krisen-Detektor',
+    pg_company:'🏢 Unternehmensanalyse', pg_scanner:'🔍 Markt-Scanner',
+    scan_asset:'Asset-Typ', scan_signal:'Signal', scan_minchg:'% Änd. Min', scan_maxchg:'% Änd. Max',
+    scan_dir:'Richtung', scan_btn:'🔍 Scannen', scan_all_assets:'Alle Assets',
+    scan_stocks:'Aktien', scan_crypto:'Krypto', scan_forex:'Devisen', scan_commodities:'Rohstoffe',
+    scan_all_signals:'Alle Signale', scan_long:'Nur LONG', scan_short:'Nur SHORT',
+    scan_neutral:'Neutral', scan_watch:'Beobachten', scan_both_dir:'Auf & Ab',
+    scan_gainers_only:'Nur Gewinner ▲', scan_losers_only:'Nur Verlierer ▼', scan_presets:'Voreinstellungen:',
+    scan_top_gainers:'🚀 Größte Gewinner', scan_top_losers:'📉 Größte Verlierer',
+    scan_long_signals:'📈 KI LONG-Signale', scan_short_signals:'📉 KI SHORT-Signale',
+    scan_momentum:'⚡ Momentum (+2%+)', scan_oversold:'🔄 Überverkauft (-2%-)',
+    scan_crypto_only:'₿ Nur Krypto', scan_run:'Scan starten um Ergebnisse zu sehen',
+    scan_ai_btn:'🤖 KI Ergebnisse analysieren',
+    mkt_open:'🟢 Markt geöffnet', mkt_closed:'🔴 Markt geschlossen', mkt_info:'NYSE · NASDAQ',
+    mkt_opens:'Öffnet 9:30 Uhr ET',
+    live_data:'LIVE-DATEN', last_updated:'Live-Daten — KI-gestützte Analyse. Zuletzt aktualisiert:',
   },
   ar_ae: {
     nav_overview:'نظرة عامة', nav_markets:'الأسواق', nav_intelligence:'تحليل الذكاء الاصطناعي',
