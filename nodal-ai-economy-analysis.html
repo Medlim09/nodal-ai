@@ -2148,8 +2148,8 @@ body::before{
     <div class="card-label">🔍 Select Company</div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;" id="companyChips"></div>
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-      <input class="search-input" id="companySearchInput" placeholder="Type ticker or company name (e.g. TSLA)..." style="flex:1;min-width:200px;" oninput="filterCompanySearch(this.value)">
-      <button class="hdr-btn hdr-btn-primary" onclick="loadCompanyAI()">🤖 Deep Analyze</button>
+      <input class="search-input" id="companySearchInput" placeholder="Type any ticker (e.g. TSLA, AMZN, BABA)..." style="flex:1;min-width:200px;" onkeydown="if(event.key==='Enter') deepAnalyzeInput()">
+      <button class="hdr-btn hdr-btn-primary" onclick="deepAnalyzeInput()">🤖 Deep Analyze</button>
     </div>
   </div>
 
@@ -4460,8 +4460,9 @@ function selectCompany(sym){
 }
 
 function filterCompanySearch(val){
+  // Auto-select if it matches a known chip company
   const v = val.toUpperCase().trim();
-  if(COMPANIES[v]) selectCompany(v);
+  if(COMPANIES[v]){ selectCompany(v); document.getElementById('companySearchInput').value = ''; }
 }
 
 function renderCompanyPage(){
@@ -4625,6 +4626,56 @@ function drawBarChart(canvasId, actual, labels, estimates, ylabel, colorA, color
   ctx2.fillText('Estimate', padL+68, 8);
 }
 
+async function deepAnalyzeInput(){
+  const inputVal = (document.getElementById('companySearchInput')?.value || '').trim().toUpperCase();
+  const ticker = inputVal || selectedCompany;
+  if(!ticker) return;
+
+  // If it's in our COMPANIES database, use full pre-built data
+  if(COMPANIES[ticker]){
+    selectCompany(ticker);
+    document.getElementById('companySearchInput').value = '';
+    return;
+  }
+
+  // Unknown ticker — fetch live price then do AI analysis
+  const el = document.getElementById('companyAIBody');
+  if(!el) return;
+  el.innerHTML = `<div class="ai-loading"><span>🔍 Fetching live data for <strong>${ticker}</strong>...</span><div class="ai-loading-bar"><div class="ai-loading-fill"></div></div></div>`;
+
+  // Update export bar for the custom ticker
+  const lbl = document.getElementById('exportBarLabel');
+  if(lbl) lbl.innerHTML = `📊 <strong id="exportBarSym">${ticker}</strong> — Custom Analysis`;
+
+  let priceInfo = '';
+  try {
+    const res = await fetch(`/api/quotes?symbols=${encodeURIComponent(ticker)}`);
+    const data = await res.json();
+    const r = data?.quoteResponse?.result?.[0];
+    if(r){
+      const p = r.regularMarketPrice;
+      const chgPct = r.regularMarketChangePercent;
+      const name = r.shortName || r.longName || ticker;
+      priceInfo = `• Current Price: $${p?.toFixed(2) || 'N/A'} (${chgPct>=0?'+':''}${chgPct?.toFixed(2) || '?'}% today)\n• Company: ${name}`;
+    }
+  } catch(e){ /* continue without price */ }
+
+  const prompt = `Provide a comprehensive investment analysis for ${ticker} as of March 2026.
+${priceInfo ? 'LIVE MARKET DATA:\n' + priceInfo : ''}
+
+MACRO CONTEXT: Fed rates 4.25-4.50%, S&P 500 near 5,700, AI investment cycle strong, tariff uncertainty, VIX elevated.
+
+Provide:
+1) **Company overview** — what does ${ticker} do, sector, key business model
+2) **Bull case** — top 3 reasons to BUY ${ticker} now
+3) **Bear case** — top 3 risks that could derail the thesis
+4) **Valuation** — is it cheap, fair, or expensive vs peers?
+5) **Trade setup** — entry zone, price target, stop loss suggestion
+6) **Overall signal** — STRONG BUY / BUY / HOLD / SELL / STRONG SELL with reasoning`;
+
+  callClaude(prompt, 'companyAIBody');
+}
+
 function loadCompanyAI(){
   const co = COMPANIES[selectedCompany];
   if(!co) return;
@@ -4651,11 +4702,11 @@ Price Target: ${co.analyst.target} (${co.analyst.upside} upside)
 
 KEY RISKS: ${co.risks.map(r=>r.r.split('—')[0]).join('; ')}
 
-MACRO CONTEXT: Fed rates 5.25-5.50%, S&P 500 at 5,218, AI investment cycle strong, China export risk, VIX 14.82 (low volatility).
+MACRO CONTEXT: Fed rates 4.25-4.50%, S&P 500 near 5,700, AI investment cycle strong, tariff uncertainty, VIX elevated.
 
 Provide:
 1) **Bull case** — top 3 reasons to BUY ${co.ticker} now
-2) **Bear case** — top 3 risks that could derail the thesis  
+2) **Bear case** — top 3 risks that could derail the thesis
 3) **Revenue quality** — is growth sustainable or one-time?
 4) **Valuation verdict** — is current P/E justified?
 5) **Trade setup** — entry, target, stop loss, position sizing recommendation
