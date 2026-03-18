@@ -1,8 +1,0 @@
-{
-  "name": "nodal-ai",
-  "version": "1.0.0",
-  "scripts": {
-    "build": "echo 'no build needed'"
-  },
-  "engines": { "node": "18.x" }
-}
