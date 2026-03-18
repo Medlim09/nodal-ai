@@ -4438,12 +4438,17 @@ Use: <span class="bull"> for positives, <span class="bear"> for negatives, <span
 function renderCompanyChips(){
   const el = document.getElementById('companyChips');
   if(!el) return;
-  el.innerHTML = Object.keys(COMPANIES).map(sym=>`
-    <span onclick="selectCompany('${sym}')" 
-      id="chip-${sym}"
-      style="padding:6px 14px;border-radius:20px;font-size:11.5px;font-weight:800;cursor:pointer;border:1px solid ${sym===selectedCompany?'var(--blue)':'var(--border2)'};background:${sym===selectedCompany?'var(--bbg)':'transparent'};color:${sym===selectedCompany?'var(--blue)':'var(--muted2)'};transition:all .15s;"
-    >${sym}</span>
-  `).join('');
+  el.innerHTML = '';
+  Object.keys(COMPANIES).forEach(sym => {
+    const btn = document.createElement('button');
+    btn.id = 'chip-' + sym;
+    btn.type = 'button';
+    btn.textContent = sym;
+    const active = sym === selectedCompany;
+    btn.style.cssText = `padding:6px 14px;border-radius:20px;font-size:11.5px;font-weight:800;cursor:pointer;border:1px solid ${active?'var(--blue)':'var(--border2)'};background:${active?'var(--bbg)':'transparent'};color:${active?'var(--blue)':'var(--muted2)'};transition:all .15s;`;
+    btn.addEventListener('click', () => selectCompany(sym));
+    el.appendChild(btn);
+  });
 }
 
 function selectCompany(sym){
@@ -4580,7 +4585,7 @@ function renderCompanyPage(){
 function drawBarChart(canvasId, actual, labels, estimates, ylabel, colorA, colorB){
   const cvs = document.getElementById(canvasId);
   if(!cvs) return;
-  const w = cvs.parentElement.offsetWidth||400;
+  const w = (cvs.parentElement.offsetWidth || cvs.closest('.card')?.offsetWidth || 340) - 16;
   cvs.width = w; cvs.height = 160;
   const ctx2 = cvs.getContext('2d');
   ctx2.clearRect(0,0,w,160);

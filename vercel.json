@@ -1,13 +1,5 @@
 {
-  "version": 2,
-  "builds": [
-    { "src": "api/*.js", "use": "@vercel/node" },
-    { "src": "nodal-ai-economy-analysis.html", "use": "@vercel/static" }
-  ],
-  "routes": [
-    { "src": "/api/quotes", "dest": "/api/quotes.js" },
-    { "src": "/api/macro",  "dest": "/api/macro.js"  },
-    { "src": "/nodal-ai-economy-analysis.html", "dest": "/nodal-ai-economy-analysis.html" },
-    { "src": "/(.*)",       "dest": "/nodal-ai-economy-analysis.html" }
+  "rewrites": [
+    { "source": "/", "destination": "/nodal-ai-economy-analysis.html" }
   ]
 }
