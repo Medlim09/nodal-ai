@@ -4,7 +4,7 @@ const https = require('https');
 
 function httpsGet(url, options = {}) {
   return new Promise((resolve, reject) => {
-    const req = https.get(url, { timeout: 10000, ...options }, (res) => {
+    const req = https.get(url, { timeout: 12000, ...options }, (res) => {
       const cookies = res.headers['set-cookie'] || [];
       let data = '';
       res.on('data', chunk => { data += chunk; });
@@ -17,6 +17,62 @@ function httpsGet(url, options = {}) {
 
 function parseCookies(cookieArr) {
   return cookieArr.map(c => c.split(';')[0]).join('; ');
+}
+
+const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36';
+const FIELDS = 'regularMarketPrice,regularMarketChange,regularMarketChangePercent,regularMarketPreviousClose,shortName,symbol,trailingPE,forwardPE,marketCap,trailingEps,fiftyTwoWeekHigh,fiftyTwoWeekLow,averageVolume,dividendYield';
+
+// Try to get crumb without loading the heavy homepage (avoids header overflow)
+async function getCrumbLight() {
+  // Step 1: hit a lightweight Yahoo endpoint to get the A1 session cookie
+  const seedResp = await httpsGet('https://query1.finance.yahoo.com/v1/test/getcrumb', {
+    headers: {
+      'User-Agent': UA,
+      'Accept': '*/*',
+      'Accept-Language': 'en-US,en;q=0.9',
+    }
+  });
+
+  const seedCookie = parseCookies(seedResp.cookies);
+  const directCrumb = (seedResp.data || '').trim();
+
+  // If we got a valid crumb on the first try (no auth needed), use it
+  if (directCrumb && !directCrumb.includes('<') && directCrumb.length < 50) {
+    return { crumb: directCrumb, cookieStr: seedCookie };
+  }
+
+  // Step 2: Need a real session — hit the smaller consent/fc endpoint instead of homepage
+  const consentResp = await httpsGet('https://fc.yahoo.com/', {
+    headers: {
+      'User-Agent': UA,
+      'Accept': 'text/html,*/*;q=0.8',
+      'Accept-Language': 'en-US,en;q=0.9',
+      'Accept-Encoding': 'identity',
+    }
+  });
+
+  let cookieStr = parseCookies(consentResp.cookies);
+
+  // Step 3: Get crumb with the fc.yahoo.com cookie
+  const crumbResp = await httpsGet('https://query1.finance.yahoo.com/v1/test/getcrumb', {
+    headers: {
+      'User-Agent': UA,
+      'Accept': '*/*',
+      'Cookie': cookieStr,
+      'Referer': 'https://finance.yahoo.com/',
+    }
+  });
+
+  if (crumbResp.cookies && crumbResp.cookies.length > 0) {
+    cookieStr = parseCookies([...consentResp.cookies, ...crumbResp.cookies]);
+  }
+
+  const crumb = (crumbResp.data || '').trim();
+  if (!crumb || crumb.includes('<')) {
+    throw new Error('Invalid crumb: ' + crumb.substring(0, 80));
+  }
+
+  return { crumb, cookieStr };
 }
 
 module.exports = async (req, res) => {
@@ -33,45 +89,12 @@ module.exports = async (req, res) => {
     return;
   }
 
-  const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36';
-
   try {
-    // Step 1: Get Yahoo Finance cookies
-    const homeResp = await httpsGet('https://finance.yahoo.com/', {
-      headers: {
-        'User-Agent': UA,
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-        'Accept-Language': 'en-US,en;q=0.9',
-        'Accept-Encoding': 'identity',
-      }
-    });
+    const { crumb, cookieStr } = await getCrumbLight();
 
-    let cookieStr = parseCookies(homeResp.cookies);
-
-    // Step 2: Get crumb
-    const crumbResp = await httpsGet('https://query1.finance.yahoo.com/v1/test/getcrumb', {
-      headers: {
-        'User-Agent': UA,
-        'Accept': '*/*',
-        'Cookie': cookieStr,
-        'Referer': 'https://finance.yahoo.com/',
-      }
-    });
-
-    if (crumbResp.cookies && crumbResp.cookies.length > 0) {
-      cookieStr = parseCookies([...homeResp.cookies, ...crumbResp.cookies]);
-    }
-
-    const crumb = (crumbResp.data || '').trim();
-    if (!crumb || crumb.includes('<')) {
-      throw new Error('Invalid crumb: ' + crumb.substring(0, 50));
-    }
-
-    // Step 3: Fetch quotes with crumb + cookies
-    const fields = 'regularMarketPrice,regularMarketChange,regularMarketChangePercent,regularMarketPreviousClose,shortName,symbol,trailingPE,forwardPE,marketCap,trailingEps,fiftyTwoWeekHigh,fiftyTwoWeekLow,averageVolume,dividendYield';
     const symEnc = encodeURIComponent(symbols);
     const crumbEnc = encodeURIComponent(crumb);
-    const url = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${symEnc}&formatted=false&crumb=${crumbEnc}&lang=en-US&region=US&fields=${fields}`;
+    const url = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${symEnc}&formatted=false&crumb=${crumbEnc}&lang=en-US&region=US&fields=${FIELDS}`;
 
     const quotesResp = await httpsGet(url, {
       headers: {
@@ -91,10 +114,10 @@ module.exports = async (req, res) => {
       }
     }
 
-    throw new Error('Quotes returned status ' + quotesResp.status + ': ' + quotesResp.data.substring(0, 100));
+    throw new Error('Quotes returned status ' + quotesResp.status + ': ' + quotesResp.data.substring(0, 120));
 
   } catch (e) {
-    console.error('Yahoo Finance crumb flow failed:', e.message);
+    console.error('Yahoo Finance flow failed:', e.message);
     res.status(502).json({ error: 'Yahoo Finance unavailable', detail: e.message });
   }
 };
