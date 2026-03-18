@@ -4464,8 +4464,7 @@ function renderCompanyPage(){
   if(!co) return;
 
   // Update export bar
-  document.getElementById('exportBarSym').textContent = co.ticker;
-  document.getElementById('exportBarLabel').innerHTML = `📊 <strong>${co.ticker}</strong> — ${co.name} — Full Analysis Ready`;
+  document.getElementById('exportBarLabel').innerHTML = `📊 <strong id="exportBarSym">${co.ticker}</strong> — ${co.name} — Full Analysis Ready`;
 
   // Header
   document.getElementById('companyIconEl').textContent = co.icon;
