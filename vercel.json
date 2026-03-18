@@ -1,5 +1,7 @@
 {
   "version": 2,
+  "buildCommand": "",
+  "outputDirectory": ".",
   "functions": {
     "api/quotes.js": { "runtime": "nodejs18.x" },
     "api/macro.js":  { "runtime": "nodejs18.x" }
