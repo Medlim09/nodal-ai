@@ -68,7 +68,7 @@ module.exports = async (req, res) => {
     }
 
     // Step 3: Fetch quotes with crumb + cookies
-    const fields = 'regularMarketPrice,regularMarketChange,regularMarketChangePercent,regularMarketPreviousClose,shortName,symbol';
+    const fields = 'regularMarketPrice,regularMarketChange,regularMarketChangePercent,regularMarketPreviousClose,shortName,symbol,trailingPE,forwardPE,marketCap,trailingEps,fiftyTwoWeekHigh,fiftyTwoWeekLow,averageVolume,dividendYield';
     const symEnc = encodeURIComponent(symbols);
     const crumbEnc = encodeURIComponent(crumb);
     const url = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${symEnc}&formatted=false&crumb=${crumbEnc}&lang=en-US&region=US&fields=${fields}`;

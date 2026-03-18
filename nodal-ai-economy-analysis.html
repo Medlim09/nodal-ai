@@ -4656,7 +4656,10 @@ async function deepAnalyzeInput(){
       const p = r.regularMarketPrice;
       const chgPct = r.regularMarketChangePercent;
       const name = r.shortName || r.longName || ticker;
-      priceInfo = `• Current Price: $${p?.toFixed(2) || 'N/A'} (${chgPct>=0?'+':''}${chgPct?.toFixed(2) || '?'}% today)\n• Company: ${name}`;
+      const pe = r.trailingPE ? `• P/E (TTM): ${r.trailingPE.toFixed(1)}x\n` : '';
+      const fwdPe = r.forwardPE ? `• Fwd P/E: ${r.forwardPE.toFixed(1)}x\n` : '';
+      const mktcap = r.marketCap ? `• Market Cap: $${formatMarketCap(r.marketCap)}\n` : '';
+      priceInfo = `• Current Price: $${p?.toFixed(2) || 'N/A'} (${chgPct>=0?'+':''}${chgPct?.toFixed(2) || '?'}% today)\n• Company: ${name}\n${mktcap}${pe}${fwdPe}`;
     }
   } catch(e){ /* continue without price */ }
 
@@ -5959,7 +5962,7 @@ async function fetchLiveStocks(){
 
   // 2nd fallback — CORS proxies if function unavailable (local dev)
   if(!results){
-    const fields = 'regularMarketPrice,regularMarketChangePercent,regularMarketChange,regularMarketPreviousClose,shortName';
+    const fields = 'regularMarketPrice,regularMarketChangePercent,regularMarketChange,regularMarketPreviousClose,shortName,trailingPE,forwardPE,marketCap,trailingEps,fiftyTwoWeekHigh,fiftyTwoWeekLow,averageVolume,dividendYield';
     const yfBase = `symbols=${symbols.join(',')}&fields=${fields}&formatted=false`;
     const proxyFns = [
       u => `https://corsproxy.io/?${encodeURIComponent(u)}`,
@@ -6045,7 +6048,9 @@ async function fetchLiveStocks(){
       if(!q[sym]) return s;
       const r = q[sym]; const p = getPrice(r);
       if(isNaN(p)) return s;
-      return {...s, p:p.toFixed(2), c:fmtPct(r), up:isUp(r)};
+      const mc = r.marketCap ? formatMarketCap(r.marketCap) : s.mc;
+      const pe = r.trailingPE ? r.trailingPE.toFixed(1) : s.pe;
+      return {...s, p:p.toFixed(2), c:fmtPct(r), up:isUp(r), mc: mc ? '$'+mc : s.mc, pe};
     });
     if(MD.stocks?.large)   MD.stocks.large   = updateList(MD.stocks.large);
     if(MD.stocks?.tech)    MD.stocks.tech    = updateList(MD.stocks.tech);
