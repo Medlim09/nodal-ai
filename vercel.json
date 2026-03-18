@@ -7,7 +7,7 @@
   "routes": [
     { "src": "/api/quotes", "dest": "/api/quotes.js" },
     { "src": "/api/macro",  "dest": "/api/macro.js"  },
-    { "src": "/",           "dest": "/nodal-ai-economy-analysis.html" },
-    { "src": "/(.*)",       "dest": "/$1" }
+    { "src": "/nodal-ai-economy-analysis.html", "dest": "/nodal-ai-economy-analysis.html" },
+    { "src": "/(.*)",       "dest": "/nodal-ai-economy-analysis.html" }
   ]
 }
